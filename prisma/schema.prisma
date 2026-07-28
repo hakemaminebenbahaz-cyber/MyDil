@@ -1,0 +1,139 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum EquipmentStatus {
+  AVAILABLE
+  LOANED
+  MAINTENANCE
+}
+
+enum EquipmentCondition {
+  NEW
+  GOOD
+  USED
+  OBSOLETE
+}
+
+enum EquipmentCategory {
+  IOT
+  VR_AR
+  ROBOTICS
+  NETWORK
+  PRINTING_3D
+  COMPUTER
+  PERIPHERALS
+  AUDIO
+  COMPONENTS
+  TOOLS
+  CONSUMABLE
+  MISC
+}
+
+enum LoanStatus {
+  PENDING
+  APPROVED
+  REFUSED
+  RETURNED
+  OVERDUE
+}
+
+enum ProjectStatus {
+  DRAFT
+  PENDING
+  PUBLISHED
+}
+
+enum ProjectType {
+  WORKSHOP
+  OPEN_INNOV
+  ACADEMIC
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String
+  firstName String
+  lastName  String
+  role      Role      @default(STUDENT)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  loans     Loan[]
+  projects  Project[]
+}
+
+model Equipment {
+  id                String              @id @default(cuid())
+  internalId        String?             @unique
+  name              String
+  model             String?
+  brand             String?
+  reference         String?
+  category          EquipmentCategory
+  status            EquipmentStatus     @default(AVAILABLE)
+  condition         EquipmentCondition  @default(GOOD)
+  location          String?
+  quantity          Int                 @default(1)
+  description       String?
+  imageUrl          String?
+  loanCount         Int                 @default(0)
+  loanable          Boolean             @default(true)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  loans             Loan[]
+}
+
+model Loan {
+  id          String     @id @default(cuid())
+  userId      String
+  equipmentId String
+  startDate   DateTime
+  endDate     DateTime
+  returnedAt  DateTime?
+  status      LoanStatus @default(PENDING)
+  note        String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  user        User       @relation(fields: [userId], references: [id])
+  equipment   Equipment  @relation(fields: [equipmentId], references: [id])
+}
+
+model Project {
+  id           String        @id @default(cuid())
+  name         String
+  description  String?
+  type         ProjectType
+  status       ProjectStatus @default(DRAFT)
+  technologies String[]
+  keywords     String[]
+  year         Int
+  supervisors  String[]
+  participants String[]
+  mediaUrls    String[]
+  zipUrl       String?
+  videoUrl     String?
+  githubUrl    String?
+  userId       String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  user         User          @relation(fields: [userId], references: [id])
+}

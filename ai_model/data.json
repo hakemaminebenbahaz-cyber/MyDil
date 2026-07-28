@@ -1,0 +1,42 @@
+{
+  "equipment": [
+    {"id":"1","name":"Niryo Ned2","brand":"Niryo","model":"Ned2","category":"ROBOTICS","description":"Bras robotique 6 axes programmable en Python et Blockly, idéal pour l'automatisation et l'apprentissage","status":"AVAILABLE","loanable":true},
+    {"id":"2","name":"Arduino UNO R3","brand":"Arduino","model":"UNO R3","category":"COMPONENTS","description":"Microcontrôleur open-source pour prototypage électronique, compatible avec de nombreux capteurs","status":"AVAILABLE","loanable":true},
+    {"id":"3","name":"Raspberry Pi 4","brand":"Raspberry Pi","model":"4 Model B 4GB","category":"COMPONENTS","description":"Nano-ordinateur pour projets IoT, serveurs, vision par ordinateur et robotique","status":"AVAILABLE","loanable":true},
+    {"id":"4","name":"Casque Meta Quest 2","brand":"Meta","model":"Quest 2 128GB","category":"VR_AR","description":"Casque de réalité virtuelle standalone, développement Unity/Unreal, expériences immersives","status":"AVAILABLE","loanable":true},
+    {"id":"5","name":"Imprimante 3D Prusa MK4","brand":"Prusa","model":"MK4","category":"PRINTING_3D","description":"Imprimante FDM haute qualité, filament PLA ABS PETG, objets 3D prototypage rapide","status":"AVAILABLE","loanable":false},
+    {"id":"6","name":"Capteur ultrason HC-SR04","brand":"Generic","model":"HC-SR04","category":"IOT","description":"Capteur de distance à ultrasons, mesure 2cm à 400cm, compatible Arduino Raspberry","status":"AVAILABLE","loanable":true},
+    {"id":"7","name":"ESP32 DevKit","brand":"Espressif","model":"ESP32","category":"IOT","description":"Module WiFi Bluetooth IoT, double coeur, parfait pour objets connectés et domotique","status":"AVAILABLE","loanable":true},
+    {"id":"8","name":"Laptop Dell XPS 13","brand":"Dell","model":"XPS 13 9310","category":"COMPUTER","description":"Ultraportable i7 16GB RAM, développement logiciel, data science, machine learning","status":"AVAILABLE","loanable":true},
+    {"id":"9","name":"Switch réseau Cisco","brand":"Cisco","model":"Catalyst 2960","category":"NETWORK","description":"Switch manageable 24 ports, VLAN, routage, configuration réseau et TP infrastructure","status":"AVAILABLE","loanable":false},
+    {"id":"10","name":"Filament PLA 1kg","brand":"Esun","model":"PLA+ Blanc","category":"PRINTING_3D","description":"Filament PLA+ blanc 1.75mm pour impression 3D, haute résistance","status":"AVAILABLE","loanable":false},
+    {"id":"11","name":"Caméra Logitech 4K","brand":"Logitech","model":"C920 4K","category":"PERIPHERALS","description":"Webcam 4K pour visioconférence, streaming, vision par ordinateur et reconnaissance faciale","status":"AVAILABLE","loanable":true},
+    {"id":"12","name":"Capteur DHT22","brand":"Aosong","model":"DHT22","category":"IOT","description":"Capteur température humidité numérique, précision 0.1°C, compatible Arduino Raspberry","status":"AVAILABLE","loanable":true},
+    {"id":"13","name":"Moteur servo SG90","brand":"Tower Pro","model":"SG90","category":"COMPONENTS","description":"Micro servomoteur 9g, rotation 180°, robotique bras articulé drone quadricoptère","status":"AVAILABLE","loanable":true},
+    {"id":"14","name":"LiDAR RPLidar A1","brand":"Slamtec","model":"A1M8","category":"ROBOTICS","description":"Scanner laser 360° pour cartographie SLAM, robot autonome, navigation obstacle","status":"AVAILABLE","loanable":true},
+    {"id":"15","name":"Micro USB HyperX","brand":"HyperX","model":"SoloCast","category":"AUDIO","description":"Microphone USB cardioïde pour enregistrement, podcast, présentation soutenance","status":"AVAILABLE","loanable":true},
+    {"id":"16","name":"Breadboard 830 points","brand":"Generic","model":"MB-102","category":"COMPONENTS","description":"Platine de prototypage sans soudure 830 trous, montage circuits électroniques","status":"AVAILABLE","loanable":true},
+    {"id":"17","name":"Oscilloscope Rigol","brand":"Rigol","model":"DS1054Z","category":"TOOLS","description":"Oscilloscope numérique 4 voies 50MHz, analyse signaux électroniques, debug circuits","status":"AVAILABLE","loanable":false},
+    {"id":"18","name":"Résistances kit 1000pcs","brand":"Generic","model":"Kit 1/4W","category":"CONSUMABLE","description":"Kit résistances 1/4W valeurs multiples, composants électroniques prototypage","status":"AVAILABLE","loanable":false},
+    {"id":"19","name":"HoloLens 2","brand":"Microsoft","model":"HoloLens 2","category":"VR_AR","description":"Casque réalité mixte holographique, développement AR, visualisation 3D, maintenance assistée","status":"AVAILABLE","loanable":true},
+    {"id":"20","name":"Drone DJI Mini 3","brand":"DJI","model":"Mini 3 Pro","category":"MISC","description":"Drone caméra 4K, stabilisateur 3 axes, cartographie aérienne, photogrammétrie","status":"AVAILABLE","loanable":true}
+  ],
+  "loans": [
+    {"equipmentId":"2","userId":"u1"},
+    {"equipmentId":"6","userId":"u1"},
+    {"equipmentId":"13","userId":"u1"},
+    {"equipmentId":"1","userId":"u2"},
+    {"equipmentId":"14","userId":"u2"},
+    {"equipmentId":"8","userId":"u3"},
+    {"equipmentId":"11","userId":"u3"},
+    {"equipmentId":"4","userId":"u4"},
+    {"equipmentId":"19","userId":"u4"},
+    {"equipmentId":"5","userId":"u5"},
+    {"equipmentId":"10","userId":"u5"},
+    {"equipmentId":"7","userId":"u6"},
+    {"equipmentId":"6","userId":"u6"},
+    {"equipmentId":"12","userId":"u6"},
+    {"equipmentId":"3","userId":"u7"},
+    {"equipmentId":"7","userId":"u7"}
+  ]
+}
