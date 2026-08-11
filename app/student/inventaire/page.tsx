@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { SkeletonCard } from "@/components/Skeleton";
 import { VitrineMap } from "@/components/VitrineMap";
@@ -42,6 +43,7 @@ const CONDITION_LABEL: Record<string, { label: string; color: string }> = {
 };
 
 export default function StudentInventairePage() {
+  const searchParams = useSearchParams();
   const [equipment, setEquipment] = useState<Equipment[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -50,17 +52,21 @@ export default function StudentInventairePage() {
   const [selected, setSelected] = useState<Equipment | null>(null);
   const [showMap, setShowMap] = useState(false);
 
-  // AI assistant state
-  const [aiOpen, setAiOpen] = useState(false);
-  const [aiQuery, setAiQuery] = useState("");
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiResult, setAiResult] = useState<{ recommendations: Equipment[]; summary: string } | null>(null);
-  const [aiError, setAiError] = useState("");
-
   useEffect(() => {
     fetch("/api/equipment")
       .then(r => r.json())
-      .then(data => { setEquipment(Array.isArray(data) ? data : []); setLoading(false); });
+      .then(data => {
+        const list = Array.isArray(data) ? data : [];
+        setEquipment(list);
+        setLoading(false);
+        // Arrivée depuis Ask Hanen (autre page) avec un équipement précis à ouvrir
+        const wanted = searchParams.get("equipment");
+        if (wanted) {
+          const match = list.find((e: Equipment) => e.id === wanted);
+          if (match) setSelected(match);
+        }
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const filtered = equipment.filter(e => {
@@ -74,27 +80,6 @@ export default function StudentInventairePage() {
 
   const categories = ["ALL", ...Array.from(new Set(equipment.map(e => e.category)))];
   const locations = ["ALL", ...Array.from(new Set(equipment.map(e => e.location).filter((l): l is string => !!l))).sort()];
-
-  const handleAiSearch = async () => {
-    if (!aiQuery.trim()) return;
-    setAiLoading(true);
-    setAiError("");
-    setAiResult(null);
-    try {
-      const res = await fetch("/api/ai/equipment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ description: aiQuery }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Erreur");
-      setAiResult(data);
-    } catch (e) {
-      setAiError(e instanceof Error ? e.message : "Erreur serveur");
-    } finally {
-      setAiLoading(false);
-    }
-  };
 
   return (
     <div>
@@ -110,167 +95,21 @@ export default function StudentInventairePage() {
               {equipment.filter(e => e.status === "AVAILABLE" && e.loanable).length} équipements disponibles au prêt
             </p>
           </div>
-          <div style={{ display: "flex", gap: 10, flexShrink: 0 }}>
-            <button
-              onClick={() => setShowMap(m => !m)}
-              style={{
-                display: "flex", alignItems: "center", gap: 8,
-                padding: "9px 18px", borderRadius: 10, fontSize: 13, fontWeight: 600,
-                background: showMap ? "#0f172a" : "#fff",
-                color: showMap ? "#fff" : "#0f172a",
-                border: `1px solid ${showMap ? "#0f172a" : "#e2e8f0"}`,
-                cursor: "pointer", transition: "all 0.15s",
-              }}>
-              <span style={{ fontSize: 15 }}>🗺️</span>
-              Plan du local
-            </button>
-            <button
-              onClick={() => { setAiOpen(o => !o); setAiResult(null); setAiError(""); }}
-              style={{
-                display: "flex", alignItems: "center", gap: 8,
-                padding: "9px 18px", borderRadius: 10, fontSize: 13, fontWeight: 600,
-                background: aiOpen ? "#0f172a" : "linear-gradient(135deg, #2D3A8C, #4BAFD6)",
-                color: "#fff", border: "none", cursor: "pointer",
-                boxShadow: "0 2px 8px rgba(45,58,140,0.25)", transition: "all 0.15s",
-              }}>
-              <span style={{ fontSize: 15 }}>✦</span>
-              Ask Hanen
-            </button>
-          </div>
+          <button
+            onClick={() => setShowMap(m => !m)}
+            style={{
+              display: "flex", alignItems: "center", gap: 8,
+              padding: "9px 18px", borderRadius: 10, fontSize: 13, fontWeight: 600,
+              background: showMap ? "#0f172a" : "#fff",
+              color: showMap ? "#fff" : "#0f172a",
+              border: `1px solid ${showMap ? "#0f172a" : "#e2e8f0"}`,
+              cursor: "pointer", transition: "all 0.15s", flexShrink: 0,
+            }}>
+            <span style={{ fontSize: 15 }}>🗺️</span>
+            Plan du local
+          </button>
         </div>
       </div>
-
-      {/* AI Assistant Panel */}
-      {aiOpen && (
-        <div style={{
-          background: "#0f172a", borderRadius: 16, padding: 24, marginBottom: 24,
-          boxShadow: "0 8px 32px rgba(15,23,42,0.2)",
-        }}>
-          <div style={{ display: "flex", height: 3, borderRadius: 2, overflow: "hidden", marginBottom: 20 }}>
-            {["#E8C030", "#2D3A8C", "#4BAFD6", "#E91E8C"].map(c => (
-              <div key={c} style={{ flex: 1, background: c }} />
-            ))}
-          </div>
-
-          <p style={{ fontSize: 11, color: "#4BAFD6", fontWeight: 600, letterSpacing: "0.1em",
-            textTransform: "uppercase", marginBottom: 6 }}>Ask Hanen · DiL</p>
-          <h2 style={{ fontSize: 16, fontWeight: 800, color: "#fff", marginBottom: 4 }}>
-            Quel matériel pour votre projet ?
-          </h2>
-          <p style={{ fontSize: 12, color: "#64748b", marginBottom: 20, lineHeight: 1.5 }}>
-            Décrivez votre projet en quelques mots et l'IA vous recommande le matériel le plus adapté parmi ce qui est disponible.
-          </p>
-
-          <div style={{ display: "flex", gap: 10 }}>
-            <textarea
-              value={aiQuery}
-              onChange={e => setAiQuery(e.target.value)}
-              onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleAiSearch(); } }}
-              placeholder="Ex : Je veux créer un robot qui suit une ligne et détecte des obstacles..."
-              rows={3}
-              style={{
-                flex: 1, padding: "12px 16px", borderRadius: 10, fontSize: 13,
-                border: "1.5px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.07)",
-                color: "#e2e8f0", outline: "none", resize: "none", lineHeight: 1.6,
-              }}
-            />
-            <button
-              onClick={handleAiSearch}
-              disabled={aiLoading || !aiQuery.trim()}
-              style={{
-                padding: "12px 20px", borderRadius: 10, fontSize: 13, fontWeight: 700,
-                background: aiLoading || !aiQuery.trim() ? "rgba(255,255,255,0.1)" : "#4BAFD6",
-                color: aiLoading || !aiQuery.trim() ? "#475569" : "#fff",
-                border: "none", cursor: aiLoading || !aiQuery.trim() ? "default" : "pointer",
-                alignSelf: "flex-end", transition: "all 0.15s", whiteSpace: "nowrap",
-              }}>
-              {aiLoading ? "Analyse..." : "Recommander →"}
-            </button>
-          </div>
-
-          {aiLoading && (
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 20,
-              padding: "14px 16px", borderRadius: 10, background: "rgba(75,175,214,0.1)" }}>
-              <div style={{
-                width: 18, height: 18, borderRadius: "50%",
-                border: "2px solid rgba(75,175,214,0.3)", borderTop: "2px solid #4BAFD6",
-                animation: "spin 0.8s linear infinite", flexShrink: 0,
-              }} />
-              <p style={{ fontSize: 12, color: "#4BAFD6" }}>Ask Hanen analyse votre projet et consulte l'inventaire...</p>
-            </div>
-          )}
-
-          {aiError && (
-            <div style={{ marginTop: 16, padding: "12px 16px", borderRadius: 10,
-              background: "rgba(201,32,80,0.15)", border: "1px solid rgba(201,32,80,0.3)" }}>
-              <p style={{ fontSize: 12, color: "#f87171" }}>{aiError}</p>
-            </div>
-          )}
-
-          {aiResult && (
-            <div style={{ marginTop: 20 }}>
-              {aiResult.summary && (
-                <div style={{ padding: "12px 16px", borderRadius: 10,
-                  background: "rgba(232,192,48,0.1)", border: "1px solid rgba(232,192,48,0.2)",
-                  marginBottom: 16 }}>
-                  <p style={{ fontSize: 12, color: "#E8C030", lineHeight: 1.6 }}>
-                    <strong>Analyse IA :</strong> {aiResult.summary}
-                  </p>
-                </div>
-              )}
-
-              {aiResult.recommendations.length === 0 ? (
-                <p style={{ fontSize: 13, color: "#64748b" }}>Aucune recommandation trouvée pour ce projet.</p>
-              ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  <p style={{ fontSize: 11, fontWeight: 600, color: "#64748b", textTransform: "uppercase",
-                    letterSpacing: "0.08em", marginBottom: 4 }}>
-                    {aiResult.recommendations.length} équipement(s) recommandé(s)
-                  </p>
-                  {aiResult.recommendations.map((eq: Equipment) => (
-                    <div key={eq.id}
-                      onClick={() => setSelected(eq)}
-                      style={{
-                        display: "flex", gap: 14, padding: "14px 16px", borderRadius: 12,
-                        background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)",
-                        cursor: "pointer", transition: "all 0.15s",
-                      }}>
-                      <div style={{
-                        width: 40, height: 40, borderRadius: 10,
-                        background: "rgba(75,175,214,0.15)", flexShrink: 0,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        fontSize: 20, overflow: "hidden",
-                      }}>
-                        {eq.imageUrl
-                          ? <img src={eq.imageUrl} alt={eq.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                          : (CAT_EMOJI[eq.category] ?? "📦")
-                        }
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                          <p style={{ fontSize: 13, fontWeight: 700, color: "#e2e8f0" }}>{eq.name}</p>
-                          {eq.brand && (
-                            <span style={{ fontSize: 11, color: "#475569" }}>
-                              {eq.brand}{eq.model ? ` ${eq.model}` : ""}
-                            </span>
-                          )}
-                        </div>
-                        <p style={{ fontSize: 12, color: "#64748b", lineHeight: 1.5 }}>{eq.reason}</p>
-                      </div>
-                      <div style={{ flexShrink: 0, alignSelf: "center" }}>
-                        <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 20,
-                          background: "rgba(75,175,214,0.2)", color: "#4BAFD6", fontWeight: 600 }}>
-                          Voir →
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
 
       {showMap && (
         <VitrineMap
@@ -444,11 +283,6 @@ export default function StudentInventairePage() {
           </div>
         )}
       </div>
-
-      <style>{`
-        @keyframes spin { to { transform: rotate(360deg); } }
-        textarea:focus { border-color: rgba(75,175,214,0.5) !important; }
-      `}</style>
     </div>
   );
 }

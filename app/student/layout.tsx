@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
+import { AskHanen } from "@/components/AskHanen";
 
 const nav = [
   { label: "Accueil",      href: "/student" },
@@ -114,6 +115,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
           {children}
         </div>
       </main>
+      <AskHanen />
     </div>
   );
 }
