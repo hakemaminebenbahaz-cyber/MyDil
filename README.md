@@ -29,6 +29,18 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Ask Hanen — assistant IA local
+
+Recommande du matériel à partir d'une description de projet (TF-IDF + similarité cosinus, `scikit-learn`, aucune clé API requise). Widget flottant sur toutes les pages étudiant.
+
+```bash
+pip install -r ai_model/requirements.txt
+npm run ai:setup   # exporte les données de la base + entraîne le modèle
+npm run ai:serve   # démarre le serveur sur http://localhost:5001
+```
+
+Relancer `npm run ai:setup` après un changement notable de l'inventaire pour ré-entraîner sur les données à jour.
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
