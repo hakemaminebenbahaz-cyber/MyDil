@@ -15,3 +15,70 @@ body {
 ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
 
 ::selection { background: #dbeafe; color: #1e40af; }
+
+/* ── Animations ── */
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96) translateY(6px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.page-fade {
+  animation: fadeIn 0.25s ease both;
+}
+
+.modal-overlay-anim {
+  animation: fadeIn 0.18s ease both;
+}
+
+.modal-panel-anim {
+  animation: scaleIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.toast-in {
+  animation: toastIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #eef1f5 25%, #f6f8fa 37%, #eef1f5 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in-up, .page-fade, .modal-overlay-anim, .modal-panel-anim, .toast-in, .skeleton {
+    animation: none !important;
+  }
+}
+
+/* Micro-interaction sur tous les boutons cliquables */
+button:not(:disabled) {
+  transition: transform 0.1s ease, opacity 0.15s ease;
+}
+button:not(:disabled):active {
+  transform: scale(0.96);
+}

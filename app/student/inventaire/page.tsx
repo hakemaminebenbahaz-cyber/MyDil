@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { SkeletonCard } from "@/components/Skeleton";
 
 const CAT_LABELS: Record<string, string> = {
   ALL: "Tous", IOT: "IoT", VR_AR: "VR / AR", ROBOTICS: "Robotique", NETWORK: "Réseau",
@@ -269,8 +270,8 @@ export default function StudentInventairePage() {
           </div>
 
           {loading ? (
-            <div style={{ textAlign: "center", padding: "60px 0", color: "#94a3b8", fontSize: 13 }}>
-              Chargement...
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
+              {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
             </div>
           ) : filtered.length === 0 ? (
             <div style={{ background: "#fff", borderRadius: 16, padding: "48px 24px",
@@ -279,14 +280,16 @@ export default function StudentInventairePage() {
             </div>
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
-              {filtered.map(e => {
+              {filtered.map((e, i) => {
                 const isSelected = selected?.id === e.id;
                 return (
                   <div key={e.id} onClick={() => setSelected(isSelected ? null : e)}
+                    className="fade-in-up"
                     style={{ background: "#fff", borderRadius: 14, padding: 18, cursor: "pointer",
                       border: `1px solid ${isSelected ? "#2D3A8C" : "#f1f5f9"}`,
                       boxShadow: isSelected ? "0 0 0 3px rgba(45,58,140,0.08)" : "0 1px 3px rgba(0,0,0,0.04)",
-                      transition: "all 0.15s" }}>
+                      transition: "border-color 0.15s, box-shadow 0.15s",
+                      animationDelay: `${Math.min(i, 16) * 25}ms` }}>
                     <div style={{ width: 44, height: 44, borderRadius: 12, background: "#f8fafc",
                       display: "flex", alignItems: "center", justifyContent: "center",
                       fontSize: 22, marginBottom: 14, overflow: "hidden", flexShrink: 0 }}>

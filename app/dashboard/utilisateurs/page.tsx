@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { SkeletonRow } from "@/components/Skeleton";
+import { useToast } from "@/components/Toast";
 
 const ROLE_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   ADMIN:   { label: "Admin",    color: "#7c2d12", bg: "#ffedd5" },
@@ -21,6 +23,7 @@ interface User {
 type Filter = "ALL" | "ADMIN" | "TEACHER" | "STUDENT";
 
 export default function UtilisateursPage() {
+  const toast = useToast();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Filter>("ALL");
@@ -43,6 +46,7 @@ export default function UtilisateursPage() {
     }).then(r => r.json());
     setUsers(prev => prev.map(u => (u.id === id ? updated : u)));
     setSavingId(null);
+    toast("Rôle mis à jour ✓");
   };
 
   const fmt = (d: string) => new Date(d).toLocaleDateString("fr-FR", {
@@ -98,8 +102,8 @@ export default function UtilisateursPage() {
 
       {/* List */}
       {loading ? (
-        <div style={{ textAlign: "center", padding: "60px 0", color: "#94a3b8", fontSize: 13 }}>
-          Chargement...
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)}
         </div>
       ) : filtered.length === 0 ? (
         <div style={{ background: "#fff", borderRadius: 16, padding: "48px 24px",
@@ -113,8 +117,8 @@ export default function UtilisateursPage() {
             const r = ROLE_CONFIG[u.role] ?? ROLE_CONFIG.STUDENT;
             const initials = `${u.firstName[0]}${u.lastName[0]}`.toUpperCase();
             return (
-              <div key={u.id} style={{ display: "flex", alignItems: "center", gap: 16,
-                padding: "16px 20px",
+              <div key={u.id} className="fade-in-up" style={{ display: "flex", alignItems: "center", gap: 16,
+                padding: "16px 20px", animationDelay: `${Math.min(i, 14) * 25}ms`,
                 borderBottom: i < filtered.length - 1 ? "1px solid #f8fafc" : "none" }}>
                 <div style={{ width: 36, height: 36, borderRadius: 10, flexShrink: 0,
                   background: "linear-gradient(135deg, #2D3A8C, #4BAFD6)",

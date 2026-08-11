@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { SkeletonCard } from "@/components/Skeleton";
 
 const TYPE_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   WORKSHOP:   { label: "Workshop",        color: "#92400e", bg: "#fef3c7" },
@@ -139,21 +140,26 @@ export default function VitrineProjetsPage() {
         </p>
 
         {/* Grid */}
-        {!loading && filtered.length === 0 ? (
+        {loading ? (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 }}>
+            {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+          </div>
+        ) : filtered.length === 0 ? (
           <div style={{ textAlign: "center", padding: "80px 0" }}>
             <div style={{ fontSize: 40, marginBottom: 16 }}>💡</div>
             <p style={{ fontSize: 15, color: "#94a3b8" }}>Aucun projet ne correspond à votre recherche</p>
           </div>
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 }}>
-            {filtered.map(p => {
+            {filtered.map((p, i) => {
               const t = TYPE_CONFIG[p.type] ?? TYPE_CONFIG.ACADEMIC;
               return (
                 <div key={p.id}
-                  onClick={() => setSelected(p)}
+                  className="fade-in-up"
                   style={{ background: "#fff", borderRadius: 16, overflow: "hidden", cursor: "pointer",
                     border: "1px solid #f1f5f9", boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-                    transition: "all 0.15s" }}
+                    transition: "all 0.15s", animationDelay: `${Math.min(i, 12) * 35}ms` }}
+                  onClick={() => setSelected(p)}
                   onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 8px 24px rgba(15,23,42,0.1)")}
                   onMouseLeave={e => (e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.04)")}>
                   {/* Color bar */}
@@ -231,9 +237,9 @@ export default function VitrineProjetsPage() {
         <div style={{ position: "fixed", inset: 0, zIndex: 100, display: "flex",
           alignItems: "center", justifyContent: "center", padding: 24 }}
           onClick={() => setSelected(null)}>
-          <div style={{ position: "absolute", inset: 0, background: "rgba(15,23,42,0.5)",
+          <div className="modal-overlay-anim" style={{ position: "absolute", inset: 0, background: "rgba(15,23,42,0.5)",
             backdropFilter: "blur(4px)" }} />
-          <div style={{ position: "relative", background: "#fff", borderRadius: 20,
+          <div className="modal-panel-anim" style={{ position: "relative", background: "#fff", borderRadius: 20,
             maxWidth: 580, width: "100%", maxHeight: "85vh", overflow: "auto",
             boxShadow: "0 24px 64px rgba(15,23,42,0.3)" }}
             onClick={e => e.stopPropagation()}>

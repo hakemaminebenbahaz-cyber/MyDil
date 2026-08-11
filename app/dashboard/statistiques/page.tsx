@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { SkeletonStat } from "@/components/Skeleton";
 
 const CAT_LABELS: Record<string, string> = {
   IOT: "IoT", VR_AR: "VR / AR", ROBOTICS: "Robotique", NETWORK: "Réseau",
@@ -46,8 +47,17 @@ export default function StatistiquesPage() {
 
   if (loading || !stats) {
     return (
-      <div style={{ textAlign: "center", padding: "80px 0", color: "#94a3b8", fontSize: 13 }}>
-        Chargement des statistiques...
+      <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+        <div>
+          <p style={{ fontSize: 11, fontWeight: 600, color: "#94a3b8", letterSpacing: "0.08em",
+            textTransform: "uppercase", marginBottom: 6 }}>Administration</p>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: "#0f172a", letterSpacing: "-0.5px" }}>
+            Statistiques
+          </h1>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14 }}>
+          {Array.from({ length: 5 }).map((_, i) => <SkeletonStat key={i} />)}
+        </div>
       </div>
     );
   }
@@ -78,8 +88,8 @@ export default function StatistiquesPage() {
           { label: "Actifs",           value: stats.activeLoans,       color: "#22c55e", bg: "#f0fdf4" },
           { label: "En retard",        value: stats.overdueLoans,      color: "#C03050", bg: "#fff1f2" },
           { label: "Projets publiés",  value: stats.publishedProjects, color: "#E8C030", bg: "#fefce8" },
-        ].map(k => (
-          <div key={k.label} style={{ background: "#fff", borderRadius: 14, padding: "20px 20px 16px",
+        ].map((k, i) => (
+          <div key={k.label} className="fade-in-up" style={{ animationDelay: `${i * 40}ms`, background: "#fff", borderRadius: 14, padding: "20px 20px 16px",
             border: "1px solid #f1f5f9", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
             <div style={{ width: 32, height: 32, borderRadius: 8, background: k.bg,
               display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}>

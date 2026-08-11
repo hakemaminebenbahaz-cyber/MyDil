@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { SkeletonRow } from "@/components/Skeleton";
+import { useToast } from "@/components/Toast";
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   DRAFT:     { label: "Brouillon",  color: "#64748b", bg: "#f1f5f9" },
@@ -35,6 +37,7 @@ interface Project {
 type Filter = "ALL" | "PENDING" | "PUBLISHED" | "DRAFT";
 
 export default function AdminProjetsPage() {
+  const toast = useToast();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Filter>("ALL");
@@ -59,6 +62,11 @@ export default function AdminProjetsPage() {
     await load();
     setActionLoading(null);
     setSelected(prev => prev?.id === id ? { ...prev, status } : prev);
+    const messages: Record<string, string> = {
+      PUBLISHED: "Projet publié ✓",
+      DRAFT: "Projet renvoyé en brouillon",
+    };
+    toast(messages[status] ?? "Projet mis à jour ✓", status === "DRAFT" ? "info" : "success");
   };
 
   const deleteProject = async (id: string) => {
@@ -66,6 +74,7 @@ export default function AdminProjetsPage() {
     await fetch(`/api/projects/${id}`, { method: "DELETE" });
     setSelected(null);
     load();
+    toast("Projet supprimé", "info");
   };
 
   const fmt = (d: string) => new Date(d).toLocaleDateString("fr-FR", {
@@ -122,8 +131,8 @@ export default function AdminProjetsPage() {
           </div>
 
           {loading ? (
-            <div style={{ textAlign: "center", padding: "60px 0", color: "#94a3b8", fontSize: 13 }}>
-              Chargement...
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)}
             </div>
           ) : filtered.length === 0 ? (
             <div style={{ background: "#fff", borderRadius: 16, padding: "48px 24px",
@@ -132,16 +141,18 @@ export default function AdminProjetsPage() {
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {filtered.map(project => {
+              {filtered.map((project, i) => {
                 const s = STATUS_CONFIG[project.status] ?? STATUS_CONFIG.DRAFT;
                 const isSelected = selected?.id === project.id;
                 return (
                   <div key={project.id} onClick={() => setSelected(isSelected ? null : project)}
+                    className="fade-in-up"
                     style={{ background: "#fff", borderRadius: 14, padding: "16px 20px",
                       border: `1px solid ${isSelected ? "#2D3A8C" : "#f1f5f9"}`,
                       boxShadow: isSelected ? "0 0 0 3px rgba(45,58,140,0.08)" : "0 1px 3px rgba(0,0,0,0.04)",
-                      cursor: "pointer", transition: "all 0.15s",
-                      display: "flex", alignItems: "center", gap: 16 }}>
+                      cursor: "pointer", transition: "border-color 0.15s, box-shadow 0.15s",
+                      display: "flex", alignItems: "center", gap: 16,
+                      animationDelay: `${Math.min(i, 14) * 30}ms` }}>
                     <div style={{ width: 40, height: 40, borderRadius: 10, background: "#eef2ff",
                       display: "flex", alignItems: "center", justifyContent: "center",
                       fontSize: 18, flexShrink: 0 }}>💡</div>

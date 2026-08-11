@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { SkeletonRow } from "@/components/Skeleton";
+import { useToast } from "@/components/Toast";
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   PENDING:  { label: "En attente",  color: "#92400e", bg: "#fef3c7" },
@@ -30,6 +32,7 @@ interface Loan {
 type Filter = "ALL" | "PENDING" | "APPROVED" | "RETURNED" | "OVERDUE";
 
 export default function AdminEmpruntsPage() {
+  const toast = useToast();
   const [loans, setLoans] = useState<Loan[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Filter>("ALL");
@@ -57,6 +60,12 @@ export default function AdminEmpruntsPage() {
     await load();
     setActionLoading(null);
     setSelected(prev => prev?.id === id ? { ...prev, status } : prev);
+    const messages: Record<string, string> = {
+      APPROVED: "Emprunt approuvé ✓",
+      REFUSED: "Emprunt refusé",
+      RETURNED: "Marqué comme retourné ✓",
+    };
+    toast(messages[status] ?? "Emprunt mis à jour ✓", status === "REFUSED" ? "info" : "success");
   };
 
   const fmt = (d: string) => new Date(d).toLocaleDateString("fr-FR", {
@@ -117,8 +126,8 @@ export default function AdminEmpruntsPage() {
 
           {/* List */}
           {loading ? (
-            <div style={{ textAlign: "center", padding: "60px 0", color: "#94a3b8", fontSize: 13 }}>
-              Chargement...
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)}
             </div>
           ) : filtered.length === 0 ? (
             <div style={{ background: "#fff", borderRadius: 16, padding: "48px 24px",
@@ -127,16 +136,18 @@ export default function AdminEmpruntsPage() {
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {filtered.map(loan => {
+              {filtered.map((loan, i) => {
                 const s = STATUS_CONFIG[loan.status] ?? STATUS_CONFIG.PENDING;
                 const isSelected = selected?.id === loan.id;
                 return (
                   <div key={loan.id} onClick={() => setSelected(isSelected ? null : loan)}
+                    className="fade-in-up"
                     style={{ background: "#fff", borderRadius: 14, padding: "16px 20px",
                       border: `1px solid ${isSelected ? "#2D3A8C" : "#f1f5f9"}`,
                       boxShadow: isSelected ? "0 0 0 3px rgba(45,58,140,0.08)" : "0 1px 3px rgba(0,0,0,0.04)",
-                      cursor: "pointer", transition: "all 0.15s",
-                      display: "flex", alignItems: "center", gap: 16 }}>
+                      cursor: "pointer", transition: "border-color 0.15s, box-shadow 0.15s",
+                      display: "flex", alignItems: "center", gap: 16,
+                      animationDelay: `${Math.min(i, 14) * 30}ms` }}>
                     <div style={{ width: 40, height: 40, borderRadius: 10, background: "#f8fafc",
                       display: "flex", alignItems: "center", justifyContent: "center",
                       fontSize: 18, flexShrink: 0 }}>

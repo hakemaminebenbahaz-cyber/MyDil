@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState, useMemo, useRef } from "react";
+import { SkeletonRow } from "@/components/Skeleton";
+import { useToast } from "@/components/Toast";
 
 type Equipment = {
   id: string; internalId: string | null; name: string; model: string | null;
@@ -38,6 +40,7 @@ const STAT: Record<string, { label: string; dot: string; color: string; bg: stri
 };
 
 export default function InventairePage() {
+  const toast = useToast();
   const [equipment, setEquipment] = useState<Equipment[]>([]);
   const [loading, setLoading]     = useState(true);
   const [search, setSearch]       = useState("");
@@ -93,6 +96,7 @@ export default function InventairePage() {
     setSelected(updated);
     setEditModal(false);
     setSubmitting(false);
+    toast("Équipement modifié ✓");
   };
 
   const handleMaintenance = async () => {
@@ -106,6 +110,7 @@ export default function InventairePage() {
     const updated = await res.json();
     setEquipment(prev => prev.map(eq => eq.id === updated.id ? updated : eq));
     setSelected(updated);
+    toast(newStatus === "MAINTENANCE" ? "Équipement mis en maintenance ✓" : "Équipement remis disponible ✓");
   };
 
   const handleAdd = async () => {
@@ -130,6 +135,7 @@ export default function InventairePage() {
     setShowModal(false);
     setForm(emptyForm);
     setSubmitting(false);
+    toast("Équipement ajouté ✓ — recherche de la photo en cours...", "info");
     // L'image arrive en arrière-plan — on la récupère après 6 secondes
     setTimeout(async () => {
       const updated = await fetch(`/api/equipment`).then(r => r.json());
@@ -137,6 +143,7 @@ export default function InventairePage() {
       if (found?.imageUrl) {
         setEquipment(updated);
         setSelected(s => s?.id === created.id ? found : s);
+        toast(`Photo trouvée pour ${found.name} ✓`);
       }
     }, 6000);
   };
@@ -261,26 +268,28 @@ export default function InventairePage() {
         {/* List */}
         <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 6 }}>
           {loading ? (
-            <div style={{ textAlign: "center", padding: "60px 0", color: "#cbd5e1", fontSize: 13 }}>
-              Chargement...
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {Array.from({ length: 7 }).map((_, i) => <SkeletonRow key={i} withBadge={false} />)}
             </div>
           ) : filtered.length === 0 ? (
             <div style={{ textAlign: "center", padding: "60px 0", color: "#cbd5e1", fontSize: 13 }}>
               Aucun résultat
             </div>
-          ) : filtered.map(e => {
+          ) : filtered.map((e, i) => {
             const isActive = sel?.id === e.id;
             const s = STAT[e.status] ?? STAT.AVAILABLE;
             const dot = CAT_DOT[e.category] ?? "#94a3b8";
             return (
               <div key={e.id} onClick={() => setSelected(e)}
+                className="fade-in-up"
                 style={{
                   display: "flex", alignItems: "center", gap: 14,
                   padding: "13px 16px", borderRadius: 12, cursor: "pointer",
                   background: isActive ? "#0f172a" : "#fff",
                   border: `1px solid ${isActive ? "#0f172a" : "#f1f5f9"}`,
                   boxShadow: isActive ? "0 4px 12px rgba(15,23,42,0.15)" : "0 1px 2px rgba(0,0,0,0.03)",
-                  transition: "all 0.15s",
+                  transition: "background 0.15s, border-color 0.15s, box-shadow 0.15s",
+                  animationDelay: `${Math.min(i, 14) * 25}ms`,
                 }}>
 
                 {/* Colored dot */}
@@ -467,11 +476,11 @@ export default function InventairePage() {
 
     {/* ══ MODAL MODIFIER ══ */}
     {editModal && selected && (
-      <div style={{
+      <div className="modal-overlay-anim" style={{
         position: "fixed", inset: 0, background: "rgba(15,23,42,0.6)", backdropFilter: "blur(4px)",
         zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 20,
       }} onClick={e => { if (e.target === e.currentTarget) setEditModal(false); }}>
-        <div style={{
+        <div className="modal-panel-anim" style={{
           background: "#fff", borderRadius: 20, padding: 32, width: "100%", maxWidth: 520,
           boxShadow: "0 24px 64px rgba(15,23,42,0.25)",
         }}>
@@ -577,11 +586,11 @@ export default function InventairePage() {
     {/* ══ MODAL AJOUT ══ */}
 
     {showModal && (
-      <div style={{
+      <div className="modal-overlay-anim" style={{
         position: "fixed", inset: 0, background: "rgba(15,23,42,0.6)", backdropFilter: "blur(4px)",
         zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 20,
       }} onClick={e => { if (e.target === e.currentTarget) setShowModal(false); }}>
-        <div style={{
+        <div className="modal-panel-anim" style={{
           background: "#fff", borderRadius: 20, padding: 32, width: "100%", maxWidth: 520,
           boxShadow: "0 24px 64px rgba(15,23,42,0.25)",
         }}>

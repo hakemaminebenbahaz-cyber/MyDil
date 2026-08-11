@@ -158,7 +158,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* ── Content ── */}
       <main style={{ maxWidth: 1400, margin: "0 auto", padding: "32px 32px" }}>
-        {children}
+        <div key={pathname} className="page-fade">
+          {children}
+        </div>
       </main>
     </div>
   );

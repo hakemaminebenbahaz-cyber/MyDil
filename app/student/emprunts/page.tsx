@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { SkeletonRow } from "@/components/Skeleton";
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   PENDING:  { label: "En attente",  color: "#92400e", bg: "#fef3c7" },
@@ -50,8 +51,8 @@ export default function MesEmpruntsPage() {
 
   if (loading) {
     return (
-      <div style={{ textAlign: "center", padding: "80px 0", color: "#94a3b8", fontSize: 13 }}>
-        Chargement...
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {Array.from({ length: 4 }).map((_, i) => <SkeletonRow key={i} />)}
       </div>
     );
   }
@@ -102,14 +103,15 @@ export default function MesEmpruntsPage() {
                 En cours · {active.length}
               </h2>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {active.map(loan => {
+                {active.map((loan, i) => {
                   const s = STATUS_CONFIG[loan.status];
                   const emoji = CAT_EMOJI[loan.equipment.category] ?? "📦";
                   const isOverdue = new Date(loan.endDate) < new Date() && loan.status === "APPROVED";
                   return (
-                    <div key={loan.id} style={{ background: "#fff", borderRadius: 14,
+                    <div key={loan.id} className="fade-in-up" style={{ background: "#fff", borderRadius: 14,
                       border: `1px solid ${isOverdue ? "#fecaca" : "#f1f5f9"}`,
-                      boxShadow: "0 1px 3px rgba(0,0,0,0.04)", overflow: "hidden" }}>
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.04)", overflow: "hidden",
+                      animationDelay: `${i * 40}ms` }}>
                       {isOverdue && (
                         <div style={{ background: "#fee2e2", padding: "6px 20px", fontSize: 11,
                           fontWeight: 600, color: "#991b1b" }}>
@@ -150,30 +152,32 @@ export default function MesEmpruntsPage() {
                 Historique · {history.length}
               </h2>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {history.map(loan => {
+                {history.map((loan, i) => {
                   const s = STATUS_CONFIG[loan.status] ?? STATUS_CONFIG.RETURNED;
                   const emoji = CAT_EMOJI[loan.equipment.category] ?? "📦";
                   return (
-                    <div key={loan.id} style={{ background: "#fff", borderRadius: 14, padding: "14px 20px",
-                      border: "1px solid #f1f5f9", boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-                      display: "flex", alignItems: "center", gap: 16, opacity: 0.7 }}>
-                      <div style={{ width: 40, height: 40, borderRadius: 10, background: "#f8fafc",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        fontSize: 18, flexShrink: 0 }}>{emoji}</div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                          <p style={{ fontSize: 13, fontWeight: 600, color: "#0f172a",
-                            overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                            {loan.equipment.name}
+                    <div key={loan.id} className="fade-in-up" style={{ animationDelay: `${i * 40}ms` }}>
+                      <div style={{ background: "#fff", borderRadius: 14, padding: "14px 20px",
+                        border: "1px solid #f1f5f9", boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+                        display: "flex", alignItems: "center", gap: 16, opacity: 0.7 }}>
+                        <div style={{ width: 40, height: 40, borderRadius: 10, background: "#f8fafc",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          fontSize: 18, flexShrink: 0 }}>{emoji}</div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                            <p style={{ fontSize: 13, fontWeight: 600, color: "#0f172a",
+                              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                              {loan.equipment.name}
+                            </p>
+                            <span style={{ padding: "2px 8px", borderRadius: 20, fontSize: 11,
+                              fontWeight: 600, background: s.bg, color: s.color, flexShrink: 0 }}>
+                              {s.label}
+                            </span>
+                          </div>
+                          <p style={{ fontSize: 12, color: "#94a3b8" }}>
+                            {fmt(loan.startDate)} → {fmt(loan.endDate)}
                           </p>
-                          <span style={{ padding: "2px 8px", borderRadius: 20, fontSize: 11,
-                            fontWeight: 600, background: s.bg, color: s.color, flexShrink: 0 }}>
-                            {s.label}
-                          </span>
                         </div>
-                        <p style={{ fontSize: 12, color: "#94a3b8" }}>
-                          {fmt(loan.startDate)} → {fmt(loan.endDate)}
-                        </p>
                       </div>
                     </div>
                   );

@@ -110,7 +110,9 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
         </div>
       </nav>
       <main style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 32px" }}>
-        {children}
+        <div key={pathname} className="page-fade">
+          {children}
+        </div>
       </main>
     </div>
   );
