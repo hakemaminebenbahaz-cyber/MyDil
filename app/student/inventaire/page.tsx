@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { SkeletonCard } from "@/components/Skeleton";
+import { VitrineMap } from "@/components/VitrineMap";
 
 const CAT_LABELS: Record<string, string> = {
   ALL: "Tous", IOT: "IoT", VR_AR: "VR / AR", ROBOTICS: "Robotique", NETWORK: "Réseau",
@@ -47,6 +48,7 @@ export default function StudentInventairePage() {
   const [category, setCategory] = useState("ALL");
   const [location, setLocation] = useState("ALL");
   const [selected, setSelected] = useState<Equipment | null>(null);
+  const [showMap, setShowMap] = useState(false);
 
   // AI assistant state
   const [aiOpen, setAiOpen] = useState(false);
@@ -108,18 +110,33 @@ export default function StudentInventairePage() {
               {equipment.filter(e => e.status === "AVAILABLE" && e.loanable).length} équipements disponibles au prêt
             </p>
           </div>
-          <button
-            onClick={() => { setAiOpen(o => !o); setAiResult(null); setAiError(""); }}
-            style={{
-              display: "flex", alignItems: "center", gap: 8,
-              padding: "9px 18px", borderRadius: 10, fontSize: 13, fontWeight: 600,
-              background: aiOpen ? "#0f172a" : "linear-gradient(135deg, #2D3A8C, #4BAFD6)",
-              color: "#fff", border: "none", cursor: "pointer", flexShrink: 0,
-              boxShadow: "0 2px 8px rgba(45,58,140,0.25)", transition: "all 0.15s",
-            }}>
-            <span style={{ fontSize: 15 }}>✦</span>
-            Ask Hanen
-          </button>
+          <div style={{ display: "flex", gap: 10, flexShrink: 0 }}>
+            <button
+              onClick={() => setShowMap(m => !m)}
+              style={{
+                display: "flex", alignItems: "center", gap: 8,
+                padding: "9px 18px", borderRadius: 10, fontSize: 13, fontWeight: 600,
+                background: showMap ? "#0f172a" : "#fff",
+                color: showMap ? "#fff" : "#0f172a",
+                border: `1px solid ${showMap ? "#0f172a" : "#e2e8f0"}`,
+                cursor: "pointer", transition: "all 0.15s",
+              }}>
+              <span style={{ fontSize: 15 }}>🗺️</span>
+              Plan du local
+            </button>
+            <button
+              onClick={() => { setAiOpen(o => !o); setAiResult(null); setAiError(""); }}
+              style={{
+                display: "flex", alignItems: "center", gap: 8,
+                padding: "9px 18px", borderRadius: 10, fontSize: 13, fontWeight: 600,
+                background: aiOpen ? "#0f172a" : "linear-gradient(135deg, #2D3A8C, #4BAFD6)",
+                color: "#fff", border: "none", cursor: "pointer",
+                boxShadow: "0 2px 8px rgba(45,58,140,0.25)", transition: "all 0.15s",
+              }}>
+              <span style={{ fontSize: 15 }}>✦</span>
+              Ask Hanen
+            </button>
+          </div>
         </div>
       </div>
 
@@ -253,6 +270,17 @@ export default function StudentInventairePage() {
             </div>
           )}
         </div>
+      )}
+
+      {showMap && (
+        <VitrineMap
+          zones={locations.filter(l => l !== "ALL").map(l => ({
+            key: l, label: l,
+            count: equipment.filter(e => e.location === l && e.status === "AVAILABLE" && e.loanable).length,
+          }))}
+          active={location}
+          onSelect={setLocation}
+        />
       )}
 
       <div style={{ display: "grid", gridTemplateColumns: selected ? "1fr 320px" : "1fr", gap: 20 }}>
