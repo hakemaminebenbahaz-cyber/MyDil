@@ -45,6 +45,7 @@ export default function StudentInventairePage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("ALL");
+  const [location, setLocation] = useState("ALL");
   const [selected, setSelected] = useState<Equipment | null>(null);
 
   // AI assistant state
@@ -62,13 +63,15 @@ export default function StudentInventairePage() {
 
   const filtered = equipment.filter(e => {
     const matchCat = category === "ALL" || e.category === category;
+    const matchLoc = location === "ALL" || e.location === location;
     const q = search.toLowerCase();
     const matchSearch = !q || e.name.toLowerCase().includes(q) ||
       (e.brand ?? "").toLowerCase().includes(q) || (e.model ?? "").toLowerCase().includes(q);
-    return matchCat && matchSearch && e.status === "AVAILABLE" && e.loanable;
+    return matchCat && matchLoc && matchSearch && e.status === "AVAILABLE" && e.loanable;
   });
 
   const categories = ["ALL", ...Array.from(new Set(equipment.map(e => e.category)))];
+  const locations = ["ALL", ...Array.from(new Set(equipment.map(e => e.location).filter((l): l is string => !!l))).sort()];
 
   const handleAiSearch = async () => {
     if (!aiQuery.trim()) return;
@@ -267,6 +270,14 @@ export default function StudentInventairePage() {
                 <option key={c} value={c}>{CAT_LABELS[c] ?? c}</option>
               ))}
             </select>
+            <select value={location} onChange={e => setLocation(e.target.value)}
+              style={{ padding: "10px 14px", borderRadius: 10, fontSize: 13,
+                border: "1px solid #e2e8f0", background: "#fff", outline: "none" }}>
+              <option value="ALL">Tous les emplacements</option>
+              {locations.filter(l => l !== "ALL").map(l => (
+                <option key={l} value={l}>📍 {l}</option>
+              ))}
+            </select>
           </div>
 
           {loading ? (
@@ -302,9 +313,15 @@ export default function StudentInventairePage() {
                       overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginBottom: 4 }}>
                       {e.name}
                     </p>
-                    <p style={{ fontSize: 11, color: "#94a3b8", marginBottom: 12 }}>
+                    <p style={{ fontSize: 11, color: "#94a3b8", marginBottom: 8 }}>
                       {[e.brand, e.model].filter(Boolean).join(" · ") || CAT_LABELS[e.category]}
                     </p>
+                    {e.location && (
+                      <p style={{ fontSize: 11, color: "#2D3A8C", fontWeight: 600, marginBottom: 12,
+                        display: "flex", alignItems: "center", gap: 4 }}>
+                        📍 {e.location}
+                      </p>
+                    )}
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                       <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 20,
                         background: "#dcfce7", color: "#166534", fontWeight: 600 }}>

@@ -46,6 +46,7 @@ export default function InventairePage() {
   const [search, setSearch]       = useState("");
   const [cat, setCat]             = useState("Toutes");
   const [stat, setStat]           = useState("Tous");
+  const [loc, setLoc]             = useState("Toutes");
   const [selected, setSelected]   = useState<Equipment | null>(null);
   const [uploading, setUploading] = useState(false);
   const fileInputRef              = useRef<HTMLInputElement>(null);
@@ -182,9 +183,14 @@ export default function InventairePage() {
         (e.name.toLowerCase().includes(q) || (e.brand ?? "").toLowerCase().includes(q) ||
           (e.internalId ?? "").toLowerCase().includes(q)) &&
         (cat === "Toutes" || e.category === cat) &&
-        (stat === "Tous"  || e.status === stat)
+        (stat === "Tous"  || e.status === stat) &&
+        (loc === "Toutes" || e.location === loc)
       );
-    }), [equipment, search, cat, stat]);
+    }), [equipment, search, cat, stat, loc]);
+
+  const locations = useMemo(() =>
+    Array.from(new Set(equipment.map(e => e.location).filter((l): l is string => !!l))).sort(),
+    [equipment]);
 
   const counts = useMemo(() => ({
     total: equipment.length,
@@ -263,6 +269,13 @@ export default function InventairePage() {
             <option value="Toutes">Toutes catégories</option>
             {Object.entries(CAT).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
           </select>
+          <select value={loc} onChange={e => setLoc(e.target.value)} style={{
+            padding: "9px 14px", borderRadius: 10, fontSize: 13, border: "1px solid #e2e8f0",
+            background: "#fff", color: loc !== "Toutes" ? "#0f172a" : "#64748b", outline: "none", cursor: "pointer",
+          }}>
+            <option value="Toutes">Tous les emplacements</option>
+            {locations.map(l => <option key={l} value={l}>📍 {l}</option>)}
+          </select>
         </div>
 
         {/* List */}
@@ -308,6 +321,12 @@ export default function InventairePage() {
                     fontSize: 11, color: isActive ? "#475569" : "#94a3b8", marginTop: 2,
                     overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
                   }}>{[e.brand, e.model].filter(Boolean).join(" · ") || "—"}</p>
+                  {e.location && (
+                    <p style={{
+                      fontSize: 11, color: isActive ? "#4BAFD6" : "#2D3A8C", fontWeight: 600, marginTop: 2,
+                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                    }}>📍 {e.location}</p>
+                  )}
                 </div>
 
                 {/* Right */}
