@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await auth();
+    if (!session || !["ADMIN", "TEACHER"].includes(session.user.role)) {
+      return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
+    }
+
     const { id } = await params;
     const { role } = await req.json();
 
