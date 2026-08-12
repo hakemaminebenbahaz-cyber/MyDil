@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { AskHanen } from "@/components/AskHanen";
+import { CommandPalette } from "@/components/CommandPalette";
 
 const nav = [
   { label: "Accueil",      href: "/student" },
@@ -13,6 +14,8 @@ const nav = [
   { label: "Mes projets",  href: "/student/projets" },
   { label: "Vitrine",      href: "/projets" },
 ];
+
+const cmdkNav = nav.map(n => ({ ...n, icon: "📄" }));
 
 const DOTS = ["#E8C030", "#2D3A8C", "#4BAFD6", "#C03050"];
 
@@ -75,6 +78,9 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
                 }}>{item.label}</Link>
               );
             })}
+          </div>
+          <div style={{ flexShrink: 0, marginRight: 4 }}>
+            <CommandPalette navItems={cmdkNav} equipmentBaseHref="/student/inventaire" />
           </div>
           <div ref={menuRef} style={{ position: "relative", flexShrink: 0 }}>
             <div onClick={() => setMenuOpen(o => !o)}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import { SkeletonRow } from "@/components/Skeleton";
 import { useToast } from "@/components/Toast";
 
@@ -41,6 +42,7 @@ const STAT: Record<string, { label: string; dot: string; color: string; bg: stri
 
 export default function InventairePage() {
   const toast = useToast();
+  const searchParams = useSearchParams();
   const [equipment, setEquipment] = useState<Equipment[]>([]);
   const [loading, setLoading]     = useState(true);
   const [search, setSearch]       = useState("");
@@ -172,8 +174,12 @@ export default function InventairePage() {
 
   useEffect(() => {
     fetch("/api/equipment").then(r => r.json()).then(d => {
-      setEquipment(d); setLoading(false); setSelected(d[0] ?? null);
+      setEquipment(d); setLoading(false);
+      const wanted = searchParams.get("equipment");
+      const match = wanted ? d.find((e: Equipment) => e.id === wanted) : null;
+      setSelected(match ?? d[0] ?? null);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const filtered = useMemo(() =>

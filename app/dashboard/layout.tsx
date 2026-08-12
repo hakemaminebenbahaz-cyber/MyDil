@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
+import { CommandPalette } from "@/components/CommandPalette";
 
 const nav = [
   { label: "Dashboard",    href: "/dashboard" },
@@ -14,6 +15,8 @@ const nav = [
   { label: "Statistiques", href: "/dashboard/statistiques" },
   { label: "Vitrine",      href: "/projets" },
 ];
+
+const cmdkNav = nav.map(n => ({ ...n, icon: "📄" }));
 
 const DOTS = ["#E8C030", "#2D3A8C", "#4BAFD6", "#C03050"];
 
@@ -100,6 +103,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
           {/* Right */}
           <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
+            <CommandPalette navItems={cmdkNav} equipmentBaseHref="/dashboard/inventaire" />
+
             {/* Notification dot */}
             <div style={{ position: "relative" }}>
               <div style={{
