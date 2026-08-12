@@ -49,7 +49,7 @@ export default function AdminEmpruntsPage() {
 
   const updateStatus = async (id: string, status: string) => {
     setActionLoading(id + status);
-    await fetch(`/api/loans/${id}`, {
+    const res = await fetch(`/api/loans/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -57,6 +57,7 @@ export default function AdminEmpruntsPage() {
         ...(status === "RETURNED" ? { returnedAt: new Date().toISOString() } : {}),
       }),
     });
+    const updated = await res.json().catch(() => null);
     await load();
     setActionLoading(null);
     setSelected(prev => prev?.id === id ? { ...prev, status } : prev);
@@ -66,6 +67,9 @@ export default function AdminEmpruntsPage() {
       RETURNED: "Marqué comme retourné ✓",
     };
     toast(messages[status] ?? "Emprunt mis à jour ✓", status === "REFUSED" ? "info" : "success");
+    if (status === "RETURNED" && updated?.waitlistNotified > 0) {
+      toast(`🔔 ${updated.waitlistNotified} étudiant(s) en attente prévenu(s)`, "info");
+    }
   };
 
   const fmt = (d: string) => new Date(d).toLocaleDateString("fr-FR", {

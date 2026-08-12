@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { SkeletonCard } from "@/components/Skeleton";
 import { VitrineMap } from "@/components/VitrineMap";
+import { useToast } from "@/components/Toast";
 
 const CAT_LABELS: Record<string, string> = {
   ALL: "Tous", IOT: "IoT", VR_AR: "VR / AR", ROBOTICS: "Robotique", NETWORK: "Réseau",
@@ -44,6 +46,8 @@ const CONDITION_LABEL: Record<string, { label: string; color: string }> = {
 
 export default function StudentInventairePage() {
   const searchParams = useSearchParams();
+  const { data: session } = useSession();
+  const toast = useToast();
   const [equipment, setEquipment] = useState<Equipment[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -51,6 +55,10 @@ export default function StudentInventairePage() {
   const [location, setLocation] = useState("ALL");
   const [selected, setSelected] = useState<Equipment | null>(null);
   const [showMap, setShowMap] = useState(false);
+
+  const [waitlisted, setWaitlisted] = useState<Set<string>>(new Set());
+  const [waitlistBusy, setWaitlistBusy] = useState<string | null>(null);
+  const [waitlistInfo, setWaitlistInfo] = useState<{ count: number; position: number | null } | null>(null);
 
   useEffect(() => {
     fetch("/api/equipment")
@@ -69,13 +77,60 @@ export default function StudentInventairePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (!session?.user?.id) return;
+    fetch(`/api/waitlist?userId=${session.user.id}`)
+      .then(r => r.json())
+      .then(entries => setWaitlisted(new Set(Array.isArray(entries) ? entries.map((e: { equipmentId: string }) => e.equipmentId) : [])));
+  }, [session?.user?.id]);
+
+  useEffect(() => {
+    if (!selected || selected.status !== "LOANED") { setWaitlistInfo(null); return; }
+    fetch(`/api/waitlist?equipmentId=${selected.id}`)
+      .then(r => r.json())
+      .then((entries: { userId: string }[]) => {
+        const list = Array.isArray(entries) ? entries : [];
+        const idx = session?.user?.id ? list.findIndex(e => e.userId === session.user.id) : -1;
+        setWaitlistInfo({ count: list.length, position: idx >= 0 ? idx + 1 : null });
+      });
+  }, [selected, session?.user?.id]);
+
+  const toggleWaitlist = async (equipmentId: string) => {
+    if (!session?.user?.id) return;
+    setWaitlistBusy(equipmentId);
+    const isIn = waitlisted.has(equipmentId);
+    try {
+      if (isIn) {
+        await fetch(`/api/waitlist?userId=${session.user.id}&equipmentId=${equipmentId}`, { method: "DELETE" });
+        setWaitlisted(prev => { const s = new Set(prev); s.delete(equipmentId); return s; });
+        toast("Retiré de la file d'attente");
+      } else {
+        await fetch("/api/waitlist", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: session.user.id, equipmentId }),
+        });
+        setWaitlisted(prev => new Set(prev).add(equipmentId));
+        toast("Ajouté à la file d'attente ✓ — tu seras averti au retour");
+      }
+      if (selected?.id === equipmentId) {
+        const entries = await fetch(`/api/waitlist?equipmentId=${equipmentId}`).then(r => r.json());
+        const list = Array.isArray(entries) ? entries : [];
+        const idx = list.findIndex((e: { userId: string }) => e.userId === session.user.id);
+        setWaitlistInfo({ count: list.length, position: idx >= 0 ? idx + 1 : null });
+      }
+    } finally {
+      setWaitlistBusy(null);
+    }
+  };
+
   const filtered = equipment.filter(e => {
     const matchCat = category === "ALL" || e.category === category;
     const matchLoc = location === "ALL" || e.location === location;
     const q = search.toLowerCase();
     const matchSearch = !q || e.name.toLowerCase().includes(q) ||
       (e.brand ?? "").toLowerCase().includes(q) || (e.model ?? "").toLowerCase().includes(q);
-    return matchCat && matchLoc && matchSearch && e.status === "AVAILABLE" && e.loanable;
+    return matchCat && matchLoc && matchSearch && (e.status === "AVAILABLE" || e.status === "LOANED") && e.loanable;
   });
 
   const categories = ["ALL", ...Array.from(new Set(equipment.map(e => e.category)))];
@@ -191,11 +246,24 @@ export default function StudentInventairePage() {
                     )}
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                       <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 20,
-                        background: "#dcfce7", color: "#166534", fontWeight: 600 }}>
-                        Disponible
+                        background: e.status === "AVAILABLE" ? "#dcfce7" : "#fef3c7",
+                        color: e.status === "AVAILABLE" ? "#166534" : "#92400e", fontWeight: 600 }}>
+                        {e.status === "AVAILABLE" ? "Disponible" : "Emprunté"}
                       </span>
                       <span style={{ fontSize: 11, color: "#94a3b8" }}>×{e.quantity}</span>
                     </div>
+                    {e.status === "LOANED" && (
+                      <button
+                        onClick={ev => { ev.stopPropagation(); toggleWaitlist(e.id); }}
+                        disabled={waitlistBusy === e.id}
+                        style={{ width: "100%", marginTop: 10, padding: "7px 0", borderRadius: 8,
+                          fontSize: 11, fontWeight: 600, border: "none",
+                          cursor: waitlistBusy === e.id ? "wait" : "pointer",
+                          background: waitlisted.has(e.id) ? "#fff1f2" : "#eef2ff",
+                          color: waitlisted.has(e.id) ? "#C03050" : "#2D3A8C" }}>
+                        {waitlistBusy === e.id ? "..." : waitlisted.has(e.id) ? "✓ En attente — quitter" : "🔔 Rejoindre la file d'attente"}
+                      </button>
+                    )}
                   </div>
                 );
               })}
@@ -272,12 +340,37 @@ export default function StudentInventairePage() {
                   </div>
                 )}
 
-                <Link href={`/student/emprunts/nouveau?equipment=${selected.id}`} style={{ textDecoration: "none" }}>
-                  <button style={{ width: "100%", padding: "11px 0", borderRadius: 10, fontSize: 13,
-                    fontWeight: 700, background: "#4BAFD6", color: "#fff", border: "none", cursor: "pointer" }}>
-                    Emprunter ce matériel
-                  </button>
-                </Link>
+                {selected.status === "AVAILABLE" ? (
+                  <Link href={`/student/emprunts/nouveau?equipment=${selected.id}`} style={{ textDecoration: "none" }}>
+                    <button style={{ width: "100%", padding: "11px 0", borderRadius: 10, fontSize: 13,
+                      fontWeight: 700, background: "#4BAFD6", color: "#fff", border: "none", cursor: "pointer" }}>
+                      Emprunter ce matériel
+                    </button>
+                  </Link>
+                ) : (
+                  <>
+                    {waitlistInfo && waitlistInfo.count > 0 && (
+                      <div style={{ padding: "10px 12px", borderRadius: 8, background: "rgba(232,192,48,0.1)",
+                        border: "1px solid rgba(232,192,48,0.2)", marginBottom: 12 }}>
+                        <p style={{ fontSize: 12, color: "#E8C030" }}>
+                          {waitlistInfo.count} étudiant{waitlistInfo.count > 1 ? "s" : ""} en attente
+                          {waitlistInfo.position && ` · ta position : ${waitlistInfo.position}`}
+                        </p>
+                      </div>
+                    )}
+                    <button
+                      onClick={() => toggleWaitlist(selected.id)}
+                      disabled={waitlistBusy === selected.id}
+                      style={{ width: "100%", padding: "11px 0", borderRadius: 10, fontSize: 13,
+                        fontWeight: 700, border: "none",
+                        cursor: waitlistBusy === selected.id ? "wait" : "pointer",
+                        background: waitlisted.has(selected.id) ? "#fff1f2" : "#4BAFD6",
+                        color: waitlisted.has(selected.id) ? "#C03050" : "#fff" }}>
+                      {waitlistBusy === selected.id ? "..." :
+                        waitlisted.has(selected.id) ? "✓ En attente — quitter la file" : "🔔 Rejoindre la file d'attente"}
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>

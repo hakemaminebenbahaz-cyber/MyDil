@@ -17,12 +17,35 @@ export async function PATCH(
         ...(returnedAt ? { returnedAt: new Date(returnedAt) } : {}),
       },
       include: {
-        equipment: { select: { name: true } },
+        equipment: { select: { id: true, name: true, status: true } },
         user: { select: { firstName: true, lastName: true } },
       },
     });
 
-    return NextResponse.json(loan);
+    // Synchronise le statut de l'équipement avec l'emprunt (jamais fait
+    // ailleurs dans l'app — le matériel restait "Disponible" indéfiniment).
+    let waitlistNotified = 0;
+    if (status === "APPROVED") {
+      await prisma.equipment.update({
+        where: { id: loan.equipment.id },
+        data: { status: "LOANED" },
+      });
+    } else if (status === "RETURNED" || status === "REFUSED") {
+      await prisma.equipment.updateMany({
+        where: { id: loan.equipment.id, status: { not: "MAINTENANCE" } },
+        data: { status: "AVAILABLE" },
+      });
+
+      if (status === "RETURNED") {
+        const result = await prisma.waitlist.updateMany({
+          where: { equipmentId: loan.equipment.id, notified: false },
+          data: { notified: true },
+        });
+        waitlistNotified = result.count;
+      }
+    }
+
+    return NextResponse.json({ ...loan, waitlistNotified });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
