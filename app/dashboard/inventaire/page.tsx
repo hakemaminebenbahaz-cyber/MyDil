@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useState, useMemo, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { SkeletonRow } from "@/components/Skeleton";
 import { useToast } from "@/components/Toast";
@@ -41,6 +41,14 @@ const STAT: Record<string, { label: string; dot: string; color: string; bg: stri
 };
 
 export default function InventairePage() {
+  return (
+    <Suspense fallback={null}>
+      <InventairePageInner />
+    </Suspense>
+  );
+}
+
+function InventairePageInner() {
   const toast = useToast();
   const searchParams = useSearchParams();
   const [equipment, setEquipment] = useState<Equipment[]>([]);

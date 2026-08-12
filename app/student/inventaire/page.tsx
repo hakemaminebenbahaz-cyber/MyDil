@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -45,6 +45,14 @@ const CONDITION_LABEL: Record<string, { label: string; color: string }> = {
 };
 
 export default function StudentInventairePage() {
+  return (
+    <Suspense fallback={null}>
+      <StudentInventairePageInner />
+    </Suspense>
+  );
+}
+
+function StudentInventairePageInner() {
   const searchParams = useSearchParams();
   const { data: session } = useSession();
   const toast = useToast();
