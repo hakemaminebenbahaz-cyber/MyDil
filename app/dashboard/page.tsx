@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { SkeletonStat } from "@/components/Skeleton";
 
 const DOTS = ["#E8C030", "#2D3A8C", "#4BAFD6", "#C03050"];
 
@@ -77,8 +78,10 @@ export default function DashboardPage() {
 
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
-        {statCards.map(s => (
-          <div key={s.label} style={{ background: "#fff", borderRadius: 16, padding: "24px 24px 20px",
+        {!stats ? (
+          Array.from({ length: 4 }).map((_, i) => <SkeletonStat key={i} />)
+        ) : statCards.map((s, i) => (
+          <div key={s.label} className="fade-in-up" style={{ animationDelay: `${i * 40}ms`, background: "#fff", borderRadius: 16, padding: "24px 24px 20px",
             border: "1px solid #f1f5f9",
             boxShadow: "0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03)" }}>
             <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
@@ -131,10 +134,10 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {stats.recentLoans.map(loan => {
+              {stats.recentLoans.map((loan, i) => {
                 const initials = `${loan.user.firstName[0]}${loan.user.lastName[0]}`.toUpperCase();
                 return (
-                  <div key={loan.id} style={{ display: "flex", alignItems: "center", gap: 14,
+                  <div key={loan.id} className="fade-in-up" style={{ animationDelay: `${i * 40}ms`, display: "flex", alignItems: "center", gap: 14,
                     padding: "14px 16px", borderRadius: 12, background: "#f8fafc", border: "1px solid #f1f5f9" }}>
                     <div style={{ width: 36, height: 36, borderRadius: 10, flexShrink: 0,
                       background: "linear-gradient(135deg, #2D3A8C, #4BAFD6)",
@@ -190,7 +193,7 @@ export default function DashboardPage() {
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
               {stats.recentProjects.map((p, i) => (
-                <div key={p.id} style={{ display: "flex", gap: 14,
+                <div key={p.id} className="fade-in-up" style={{ animationDelay: `${i * 40}ms`, display: "flex", gap: 14,
                   paddingBottom: i < stats.recentProjects.length - 1 ? 16 : 0,
                   marginBottom: i < stats.recentProjects.length - 1 ? 16 : 0,
                   borderBottom: i < stats.recentProjects.length - 1 ? "1px solid #f8fafc" : "none" }}>

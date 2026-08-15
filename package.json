@@ -4,9 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "postinstall": "prisma generate",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "ai:export": "node ai_model/export_data.mjs",
+    "ai:train": "python ai_model/train.py",
+    "ai:setup": "npm run ai:export && npm run ai:train",
+    "ai:serve": "python ai_model/api.py"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.99.0",

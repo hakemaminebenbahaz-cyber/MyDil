@@ -69,16 +69,17 @@ enum ProjectType {
 }
 
 model User {
-  id        String    @id @default(cuid())
-  email     String    @unique
-  password  String
-  firstName String
-  lastName  String
-  role      Role      @default(STUDENT)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  loans     Loan[]
-  projects  Project[]
+  id         String      @id @default(cuid())
+  email      String      @unique
+  password   String
+  firstName  String
+  lastName   String
+  role       Role        @default(STUDENT)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  loans      Loan[]
+  projects   Project[]
+  waitlists  Waitlist[]
 }
 
 model Equipment {
@@ -100,6 +101,19 @@ model Equipment {
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
   loans             Loan[]
+  waitlists         Waitlist[]
+}
+
+model Waitlist {
+  id          String    @id @default(cuid())
+  userId      String
+  equipmentId String
+  notified    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  user        User      @relation(fields: [userId], references: [id])
+  equipment   Equipment @relation(fields: [equipmentId], references: [id])
+
+  @@unique([userId, equipmentId])
 }
 
 model Loan {
@@ -132,6 +146,7 @@ model Project {
   zipUrl       String?
   videoUrl     String?
   githubUrl    String?
+  likes        Int           @default(0)
   userId       String
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt

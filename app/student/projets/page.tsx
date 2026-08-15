@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { SkeletonRow } from "@/components/Skeleton";
 
 const STATUS_LABEL: Record<string, { label: string; color: string; bg: string }> = {
   DRAFT:     { label: "Brouillon",  color: "#64748b", bg: "#f1f5f9" },
@@ -61,8 +62,8 @@ export default function MesProjetsPage() {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: "center", padding: "60px 0", color: "#94a3b8", fontSize: 13 }}>
-          Chargement...
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {Array.from({ length: 4 }).map((_, i) => <SkeletonRow key={i} />)}
         </div>
       ) : projects.length === 0 ? (
         <div style={{ background: "#fff", borderRadius: 16, padding: "60px 24px",
@@ -84,12 +85,12 @@ export default function MesProjetsPage() {
         </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {projects.map(p => {
+          {projects.map((p, i) => {
             const s = STATUS_LABEL[p.status] ?? STATUS_LABEL.DRAFT;
             return (
-              <div key={p.id} style={{ background: "#fff", borderRadius: 16, padding: 24,
+              <div key={p.id} className="fade-in-up" style={{ background: "#fff", borderRadius: 16, padding: 24,
                 border: "1px solid #f1f5f9", boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-                display: "flex", alignItems: "center", gap: 20 }}>
+                display: "flex", alignItems: "center", gap: 20, animationDelay: `${i * 40}ms` }}>
                 <div style={{ width: 44, height: 44, borderRadius: 12, background: "#eef2ff",
                   display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20,
                   flexShrink: 0 }}>💡</div>

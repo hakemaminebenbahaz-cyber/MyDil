@@ -1,42 +1,654 @@
 {
   "equipment": [
-    {"id":"1","name":"Niryo Ned2","brand":"Niryo","model":"Ned2","category":"ROBOTICS","description":"Bras robotique 6 axes programmable en Python et Blockly, idéal pour l'automatisation et l'apprentissage","status":"AVAILABLE","loanable":true},
-    {"id":"2","name":"Arduino UNO R3","brand":"Arduino","model":"UNO R3","category":"COMPONENTS","description":"Microcontrôleur open-source pour prototypage électronique, compatible avec de nombreux capteurs","status":"AVAILABLE","loanable":true},
-    {"id":"3","name":"Raspberry Pi 4","brand":"Raspberry Pi","model":"4 Model B 4GB","category":"COMPONENTS","description":"Nano-ordinateur pour projets IoT, serveurs, vision par ordinateur et robotique","status":"AVAILABLE","loanable":true},
-    {"id":"4","name":"Casque Meta Quest 2","brand":"Meta","model":"Quest 2 128GB","category":"VR_AR","description":"Casque de réalité virtuelle standalone, développement Unity/Unreal, expériences immersives","status":"AVAILABLE","loanable":true},
-    {"id":"5","name":"Imprimante 3D Prusa MK4","brand":"Prusa","model":"MK4","category":"PRINTING_3D","description":"Imprimante FDM haute qualité, filament PLA ABS PETG, objets 3D prototypage rapide","status":"AVAILABLE","loanable":false},
-    {"id":"6","name":"Capteur ultrason HC-SR04","brand":"Generic","model":"HC-SR04","category":"IOT","description":"Capteur de distance à ultrasons, mesure 2cm à 400cm, compatible Arduino Raspberry","status":"AVAILABLE","loanable":true},
-    {"id":"7","name":"ESP32 DevKit","brand":"Espressif","model":"ESP32","category":"IOT","description":"Module WiFi Bluetooth IoT, double coeur, parfait pour objets connectés et domotique","status":"AVAILABLE","loanable":true},
-    {"id":"8","name":"Laptop Dell XPS 13","brand":"Dell","model":"XPS 13 9310","category":"COMPUTER","description":"Ultraportable i7 16GB RAM, développement logiciel, data science, machine learning","status":"AVAILABLE","loanable":true},
-    {"id":"9","name":"Switch réseau Cisco","brand":"Cisco","model":"Catalyst 2960","category":"NETWORK","description":"Switch manageable 24 ports, VLAN, routage, configuration réseau et TP infrastructure","status":"AVAILABLE","loanable":false},
-    {"id":"10","name":"Filament PLA 1kg","brand":"Esun","model":"PLA+ Blanc","category":"PRINTING_3D","description":"Filament PLA+ blanc 1.75mm pour impression 3D, haute résistance","status":"AVAILABLE","loanable":false},
-    {"id":"11","name":"Caméra Logitech 4K","brand":"Logitech","model":"C920 4K","category":"PERIPHERALS","description":"Webcam 4K pour visioconférence, streaming, vision par ordinateur et reconnaissance faciale","status":"AVAILABLE","loanable":true},
-    {"id":"12","name":"Capteur DHT22","brand":"Aosong","model":"DHT22","category":"IOT","description":"Capteur température humidité numérique, précision 0.1°C, compatible Arduino Raspberry","status":"AVAILABLE","loanable":true},
-    {"id":"13","name":"Moteur servo SG90","brand":"Tower Pro","model":"SG90","category":"COMPONENTS","description":"Micro servomoteur 9g, rotation 180°, robotique bras articulé drone quadricoptère","status":"AVAILABLE","loanable":true},
-    {"id":"14","name":"LiDAR RPLidar A1","brand":"Slamtec","model":"A1M8","category":"ROBOTICS","description":"Scanner laser 360° pour cartographie SLAM, robot autonome, navigation obstacle","status":"AVAILABLE","loanable":true},
-    {"id":"15","name":"Micro USB HyperX","brand":"HyperX","model":"SoloCast","category":"AUDIO","description":"Microphone USB cardioïde pour enregistrement, podcast, présentation soutenance","status":"AVAILABLE","loanable":true},
-    {"id":"16","name":"Breadboard 830 points","brand":"Generic","model":"MB-102","category":"COMPONENTS","description":"Platine de prototypage sans soudure 830 trous, montage circuits électroniques","status":"AVAILABLE","loanable":true},
-    {"id":"17","name":"Oscilloscope Rigol","brand":"Rigol","model":"DS1054Z","category":"TOOLS","description":"Oscilloscope numérique 4 voies 50MHz, analyse signaux électroniques, debug circuits","status":"AVAILABLE","loanable":false},
-    {"id":"18","name":"Résistances kit 1000pcs","brand":"Generic","model":"Kit 1/4W","category":"CONSUMABLE","description":"Kit résistances 1/4W valeurs multiples, composants électroniques prototypage","status":"AVAILABLE","loanable":false},
-    {"id":"19","name":"HoloLens 2","brand":"Microsoft","model":"HoloLens 2","category":"VR_AR","description":"Casque réalité mixte holographique, développement AR, visualisation 3D, maintenance assistée","status":"AVAILABLE","loanable":true},
-    {"id":"20","name":"Drone DJI Mini 3","brand":"DJI","model":"Mini 3 Pro","category":"MISC","description":"Drone caméra 4K, stabilisateur 3 axes, cartographie aérienne, photogrammétrie","status":"AVAILABLE","loanable":true}
+    {
+      "id": "cmsovdt3c0001v3rs65fek505",
+      "name": "VR MetaQuest 2",
+      "brand": "Meta",
+      "model": "Quest 2 256 Go",
+      "category": "VR_AR",
+      "description": "Casque VR autonome 256 Go, 2 manettes",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt3p0003v3rsht2uz5ud",
+      "name": "VR Microsoft HoloLens 2",
+      "brand": "Microsoft",
+      "model": "HoloLens 2",
+      "category": "VR_AR",
+      "description": "Casque AR holographique développeur",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt410005v3rslimxoion",
+      "name": "Boîte vide Quest 3S",
+      "brand": "Meta",
+      "model": "Boîte Quest 3S",
+      "category": "MISC",
+      "description": "Boîte vide de rangement Quest 3S",
+      "status": "AVAILABLE",
+      "loanable": false
+    },
+    {
+      "id": "cmsovdt470006v3rsnqqoacjv",
+      "name": "Boîte vide Quest 3",
+      "brand": "Meta",
+      "model": "Boîte Quest 3",
+      "category": "MISC",
+      "description": "Boîte vide de rangement Quest 3",
+      "status": "AVAILABLE",
+      "loanable": false
+    },
+    {
+      "id": "cmsovdt4d0007v3rs254aqjot",
+      "name": "Boîte vide Quest 1",
+      "brand": "Oculus",
+      "model": "Boîte Quest 1",
+      "category": "MISC",
+      "description": "Boîte vide de rangement Quest 1",
+      "status": "AVAILABLE",
+      "loanable": false
+    },
+    {
+      "id": "cmsovdt4p0009v3rsx1zkajgg",
+      "name": "Ubtech Yanshee",
+      "brand": "Ubtech",
+      "model": "Yanshee",
+      "category": "ROBOTICS",
+      "description": "Robot humanoïde programmable, 16 servos",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt4v000av3rslscoyqea",
+      "name": "Robomaster S1",
+      "brand": "DJI",
+      "model": "RoboMaster S1",
+      "category": "ROBOTICS",
+      "description": "Robot tank éducatif DJI, programmation Python",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt56000cv3rs5nrjvwrl",
+      "name": "ESP32",
+      "brand": "Espressif",
+      "model": "ESP32-WROOM-32",
+      "category": "IOT",
+      "description": "Module WiFi/Bluetooth dual-core 240MHz",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt5c000dv3rsea21yoho",
+      "name": "Boutons poussoirs",
+      "brand": "Divers",
+      "model": "Boutons 6x6mm",
+      "category": "COMPONENTS",
+      "description": "Boutons poussoirs électroniques divers",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt5n000fv3rsw2jju5bh",
+      "name": "LED RGB et monocolor",
+      "brand": "Divers",
+      "model": "LED 3mm/5mm",
+      "category": "COMPONENTS",
+      "description": "Diodes électroluminescentes diverses",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt5t000gv3rsh2lqitdm",
+      "name": "Cartes SD",
+      "brand": "SanDisk",
+      "model": "Micro SD 16/32/64 Go",
+      "category": "COMPONENTS",
+      "description": "Cartes mémoire microSD avec adaptateur",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt64000iv3rsieqk1xym",
+      "name": "Condensateurs",
+      "brand": "Divers",
+      "model": "Céramique/électrolytique",
+      "category": "COMPONENTS",
+      "description": "Condensateurs divers 10pF-1000µF",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt6a000jv3rsi8tsguc4",
+      "name": "Résistances",
+      "brand": "Divers",
+      "model": "1/4W 1% E12",
+      "category": "COMPONENTS",
+      "description": "Résistances carbone film 10Ω-1MΩ",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt6l000lv3rsq3svx9lo",
+      "name": "Boîtes de rangement",
+      "brand": "Divers",
+      "model": "Boîtes plastique",
+      "category": "MISC",
+      "description": "Boîtes plastique de rangement composants",
+      "status": "AVAILABLE",
+      "loanable": false
+    },
+    {
+      "id": "cmsovdt6q000mv3rsbh4zdes6",
+      "name": "Boîtes de câbles",
+      "brand": "Divers",
+      "model": "Boîtes câbles USB/RJ45",
+      "category": "MISC",
+      "description": "Boîtes de rangement câbles divers",
+      "status": "AVAILABLE",
+      "loanable": false
+    },
+    {
+      "id": "cmsovdt6w000nv3rsors17nwt",
+      "name": "Batteries",
+      "brand": "Divers",
+      "model": "Li-Po / Li-Ion / AA",
+      "category": "MISC",
+      "description": "Batteries rechargeables diverses",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt77000pv3rstu7mbvt5",
+      "name": "Manettes Nacon",
+      "brand": "Nacon",
+      "model": "Revolution Pro / Compact",
+      "category": "PERIPHERALS",
+      "description": "Manette gaming filaire/sans fil PS4/PC",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt7d000qv3rssjgw016k",
+      "name": "Imprimante 3D Ender 3 Pro",
+      "brand": "Creality",
+      "model": "Ender 3 Pro",
+      "category": "PRINTING_3D",
+      "description": "Imprimante 3D FDM, plateau 220x220x250mm",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt7p000sv3rsxjx8cqfu",
+      "name": "Potentiomètres (80pcs)",
+      "brand": "Divers",
+      "model": "Kit linéaires/rotatifs",
+      "category": "COMPONENTS",
+      "description": "Kit 80 potentiomètres 1kΩ-1MΩ",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt81000uv3rs0pcktfz3",
+      "name": "Raspberry Pi",
+      "brand": "Raspberry",
+      "model": "Pi 4 8Go / Pi 3 / Zero W",
+      "category": "IOT",
+      "description": "Nano-ordinateur ARM, ports GPIO 40 broches",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt87000vv3rstcvtu6g6",
+      "name": "Clavier Logitech K120",
+      "brand": "Logitech",
+      "model": "K120",
+      "category": "PERIPHERALS",
+      "description": "Clavier filaire USB AZERTY, résistant aux éclaboussures",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt8d000wv3rsbwzx3jdw",
+      "name": "Clavier HP",
+      "brand": "HP",
+      "model": "320M",
+      "category": "PERIPHERALS",
+      "description": "Clavier filaire USB AZERTY",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt8p000yv3rs7esmonoq",
+      "name": "Clavier Logitech G512",
+      "brand": "Logitech",
+      "model": "G512/G513 Carbon",
+      "category": "PERIPHERALS",
+      "description": "Clavier mécanique gaming GX Brown, RGB Lightsync",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt8u000zv3rsysqdcvti",
+      "name": "Clavier Dell",
+      "brand": "Dell",
+      "model": "KB216",
+      "category": "PERIPHERALS",
+      "description": "Clavier filaire USB AZERTY",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt950011v3rse6b8z5s9",
+      "name": "PC MSI GF75",
+      "brand": "MSI",
+      "model": "GF75 Thin 10SC",
+      "category": "COMPUTER",
+      "description": "PC Portable Gamer 17.3\" FHD 144Hz, GTX 1650 — i7-10750H, 16Go DDR4, 512Go SSD + 1To HDD",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdtcb001mv3rsgj8yudyz",
+      "name": "Imprimante 3D Falcin",
+      "brand": "Falcin",
+      "model": "Falcin",
+      "category": "PRINTING_3D",
+      "description": "Imprimante 3D FDM professionnelle",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdtch001nv3rsbocafayd",
+      "name": "Makerbot Replicator",
+      "brand": "Makerbot",
+      "model": "Replicator+ / Replicator 2",
+      "category": "PRINTING_3D",
+      "description": "Imprimante 3D FDM professionnelle, don IDRAC",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdtcm001ov3rscflj9836",
+      "name": "Creality K2 Plus",
+      "brand": "Creality",
+      "model": "K2 Plus",
+      "category": "PRINTING_3D",
+      "description": "Imprimante 3D FDM CoreXY, volume 350x350x350mm",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdtcs001pv3rszgq7aa76",
+      "name": "Rouleaux filament PLA/ABS/PETG",
+      "brand": "Sunlu/Neofil3D/Smartfil",
+      "model": "1.75mm",
+      "category": "CONSUMABLE",
+      "description": "Filament 3D 1.75mm diverses couleurs",
+      "status": "AVAILABLE",
+      "loanable": false
+    },
+    {
+      "id": "cmsovdtcy001qv3rs7vfjayty",
+      "name": "Filament PLA vert 750g",
+      "brand": "Neofil3D",
+      "model": "PLA 1.75mm 750g Vert",
+      "category": "CONSUMABLE",
+      "description": "Filament PLA vert 1.75mm, bobine 750g",
+      "status": "AVAILABLE",
+      "loanable": false
+    },
+    {
+      "id": "cmsovdtd3001rv3rsq4ul7ls0",
+      "name": "Filament PLA vert 750g (2)",
+      "brand": "Neofil3D",
+      "model": "PLA 1.75mm 750g Vert",
+      "category": "CONSUMABLE",
+      "description": "Filament PLA vert 1.75mm, bobine 750g",
+      "status": "AVAILABLE",
+      "loanable": false
+    },
+    {
+      "id": "cmsovdt2z0000v3rspy8f0sz1",
+      "name": "Robot bleu",
+      "brand": "EPSI/Divers",
+      "model": "Robot Éducatif BLEU",
+      "category": "ROBOTICS",
+      "description": "Robot pédagogique programmable",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt3j0002v3rscb5mxe1f",
+      "name": "VR Varjo XR-3",
+      "brand": "Varjo",
+      "model": "XR-3",
+      "category": "VR_AR",
+      "description": "Casque VR/AR haute fidélité professionnel, résolution humaine",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt3v0004v3rsrdhndukz",
+      "name": "VR Oculus Dev Kit DK2",
+      "brand": "Oculus",
+      "model": "DK2",
+      "category": "VR_AR",
+      "description": "Kit développement VR (ancienne génération)",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt4j0008v3rsdpk02wod",
+      "name": "Bras robot Niryo Ned2",
+      "brand": "Niryo",
+      "model": "Ned2",
+      "category": "ROBOTICS",
+      "description": "Bras robotique 6 axes éducatif, portée 440mm",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt51000bv3rs9ygtim0u",
+      "name": "Arduino UNO R3",
+      "brand": "Arduino",
+      "model": "UNO R3",
+      "category": "IOT",
+      "description": "Carte microcontrôleur ATmega328P, 14 E/S digitales",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt5h000ev3rs48bynma0",
+      "name": "Actionneurs",
+      "brand": "Divers",
+      "model": "Servomoteurs / Moteurs pas à pas",
+      "category": "COMPONENTS",
+      "description": "Actionneurs électromécaniques divers",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt9h0013v3rsnudao49o",
+      "name": "PC Dell Latitude 5510",
+      "brand": "Dell",
+      "model": "Latitude 5510",
+      "category": "COMPUTER",
+      "description": "PC Portable professionnel 15.6\" FHD — i5-10210U, 8Go DDR4, 256Go SSD",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt9n0014v3rsqyobv76i",
+      "name": "Caméra Smart Home EZVIZ",
+      "brand": "EZVIZ",
+      "model": "C6N / C3W",
+      "category": "PERIPHERALS",
+      "description": "Caméra surveillance WiFi 1080p, vision nocturne",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt9y0016v3rs0pqt5eq1",
+      "name": "Wireless Presenter",
+      "brand": "Logitech",
+      "model": "R800 / R400",
+      "category": "PERIPHERALS",
+      "description": "Télécommande présentation laser rouge",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdta30017v3rselyhvrtj",
+      "name": "Micro cravate sans fil",
+      "brand": "Lavalier",
+      "model": "K30 4-en-1",
+      "category": "AUDIO",
+      "description": "Micro cravate sans fil 4 en 1 (Lightning/USB-C/jack)",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdtad0019v3rsr7g8zqrb",
+      "name": "Micro HyperX QuadCast",
+      "brand": "HyperX",
+      "model": "QuadCast S",
+      "category": "AUDIO",
+      "description": "Micro USB condensateur gaming, RGB, anti-pop",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdtah001av3rsc1aw6tu0",
+      "name": "Support caméra PIXI",
+      "brand": "Manfrotto",
+      "model": "Mini Tripod",
+      "category": "MISC",
+      "description": "Mini trépied pour caméra compacte",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdtam001bv3rsejcxiz7r",
+      "name": "Webcam Logitech C920s",
+      "brand": "Logitech",
+      "model": "C920s PRO HD",
+      "category": "PERIPHERALS",
+      "description": "Webcam Full HD 1080p, autofocus, stéréo",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdtax001dv3rs6ncxw5ew",
+      "name": "Caméra Vaddio",
+      "brand": "Vaddio",
+      "model": "RoboSHOT / ConferenceSHOT",
+      "category": "PERIPHERALS",
+      "description": "Caméra PTZ USB professionnelle",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdtb2001ev3rs7azc4w0p",
+      "name": "WiFi Router Linksys",
+      "brand": "Linksys",
+      "model": "WRT1900ACS",
+      "category": "NETWORK",
+      "description": "Routeur WiFi AC1900 dual-band, OpenWRT",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdtbc001gv3rsl78pfyvv",
+      "name": "Access Point Netgear",
+      "brand": "Netgear",
+      "model": "WAC104/WAC510",
+      "category": "NETWORK",
+      "description": "Point d'accès WiFi AC dual-band",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdtbh001hv3rs3840mdf5",
+      "name": "Kit soudure Goobay",
+      "brand": "Goobay",
+      "model": "Kit soudure complet",
+      "category": "TOOLS",
+      "description": "Kit fer à souder 60W + support + pompe + soudure",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdtbs001jv3rssg05nmsm",
+      "name": "Switch Cisco",
+      "brand": "Cisco",
+      "model": "Catalyst 2950/SG250-08",
+      "category": "NETWORK",
+      "description": "Switch Ethernet 24/8 ports 10/100/1000 Mbps",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdtbz001kv3rsd93wpexn",
+      "name": "Perceuse-visseuse",
+      "brand": "Divers",
+      "model": "12/18V",
+      "category": "TOOLS",
+      "description": "Perceuse électrique pour bricolage/montage",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt5y000hv3rs6juzy22m",
+      "name": "Écran LCD",
+      "brand": "Divers",
+      "model": "LCD 16x2 / 20x4 I2C",
+      "category": "COMPONENTS",
+      "description": "Écrans LCD alphanumériques avec backpack I2C",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt6f000kv3rshrewujbk",
+      "name": "Modules GPIO extension",
+      "brand": "Divers",
+      "model": "GPIO extension",
+      "category": "COMPONENTS",
+      "description": "Modules d'extension GPIO pour Raspberry/Arduino",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt71000ov3rsa50fb8yc",
+      "name": "Casque Logitech G335",
+      "brand": "Logitech",
+      "model": "G335",
+      "category": "AUDIO",
+      "description": "Casque gaming léger, jack 3.5mm, micro intégré",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt7j000rv3rs3zmuaqdt",
+      "name": "Stylo 3D Mynt3D",
+      "brand": "MYNT",
+      "model": "MYNT3D PRO",
+      "category": "PRINTING_3D",
+      "description": "Stylo 3D d'impression avec écran OLED",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt7v000tv3rszc5gdert",
+      "name": "Capteurs divers",
+      "brand": "Divers",
+      "model": "Température/Humidité/Ultrason/PIR",
+      "category": "IOT",
+      "description": "Kit capteurs électroniques divers",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt8j000xv3rsbaym075j",
+      "name": "Clavier Microsoft",
+      "brand": "Microsoft",
+      "model": "Keyboard 200",
+      "category": "PERIPHERALS",
+      "description": "Clavier filaire USB AZERTY, touches silencieuses",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt900010v3rsohtmfd4z",
+      "name": "Clavier Logitech K800",
+      "brand": "Logitech",
+      "model": "K800",
+      "category": "PERIPHERALS",
+      "description": "Clavier sans fil rétroéclairé, touches PerfectStroke",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt9b0012v3rsrowbhl2r",
+      "name": "PC MSI GF66 Katana",
+      "brand": "MSI",
+      "model": "GF66 11UD",
+      "category": "COMPUTER",
+      "description": "PC Portable Gamer 15.6\" FHD 144Hz, RTX 3050 Ti — i5-11400H, 16Go DDR4, 512Go SSD NVMe",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdt9s0015v3rsztyzgkm2",
+      "name": "Google Chromecast",
+      "brand": "Google",
+      "model": "3rd Gen",
+      "category": "PERIPHERALS",
+      "description": "Dongle streaming HDMI, Full HD 1080p",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdta80018v3rsi0tc8pj0",
+      "name": "Caméra Polycom",
+      "brand": "Polycom",
+      "model": "RealPresence Group 310",
+      "category": "PERIPHERALS",
+      "description": "Système visioconférence HD, caméra PTZ",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdtas001cv3rsqrlb5632",
+      "name": "Ring Light LED",
+      "brand": "Divers",
+      "model": "Air Ring Light / LED Panel",
+      "category": "MISC",
+      "description": "Éclairage LED pour streaming/photo",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdtb7001fv3rsjrl9qtx3",
+      "name": "Access Point Planet",
+      "brand": "Planet",
+      "model": "WNAP-6350/WNAP-6305",
+      "category": "NETWORK",
+      "description": "Point d'accès WiFi N 300Mbps, PoE",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdtbn001iv3rschv8uenf",
+      "name": "Fer à souder Parkside",
+      "brand": "Parkside",
+      "model": "PLS48D2/PLSG48",
+      "category": "TOOLS",
+      "description": "Fer à souder électrique 48W avec LED",
+      "status": "AVAILABLE",
+      "loanable": true
+    },
+    {
+      "id": "cmsovdtc5001lv3rs766bxh0x",
+      "name": "Cisco Router 2800",
+      "brand": "Cisco",
+      "model": "2801/2811/2600",
+      "category": "NETWORK",
+      "description": "Routeur modulaire Cisco série 2800/2600",
+      "status": "AVAILABLE",
+      "loanable": true
+    }
   ],
   "loans": [
-    {"equipmentId":"2","userId":"u1"},
-    {"equipmentId":"6","userId":"u1"},
-    {"equipmentId":"13","userId":"u1"},
-    {"equipmentId":"1","userId":"u2"},
-    {"equipmentId":"14","userId":"u2"},
-    {"equipmentId":"8","userId":"u3"},
-    {"equipmentId":"11","userId":"u3"},
-    {"equipmentId":"4","userId":"u4"},
-    {"equipmentId":"19","userId":"u4"},
-    {"equipmentId":"5","userId":"u5"},
-    {"equipmentId":"10","userId":"u5"},
-    {"equipmentId":"7","userId":"u6"},
-    {"equipmentId":"6","userId":"u6"},
-    {"equipmentId":"12","userId":"u6"},
-    {"equipmentId":"3","userId":"u7"},
-    {"equipmentId":"7","userId":"u7"}
+    {
+      "equipmentId": "cmsovdt2z0000v3rspy8f0sz1",
+      "userId": "cmsov67ro0000v3usoii9nhfz"
+    },
+    {
+      "equipmentId": "cmsovdt3j0002v3rscb5mxe1f",
+      "userId": "cmsov67ro0000v3usoii9nhfz"
+    }
   ]
 }

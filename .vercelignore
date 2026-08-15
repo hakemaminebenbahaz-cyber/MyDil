@@ -1,0 +1,5 @@
+.env
+.env.local
+.env.*.local
+ai_model/
+Rapport_de_stage_myDiL.pdf

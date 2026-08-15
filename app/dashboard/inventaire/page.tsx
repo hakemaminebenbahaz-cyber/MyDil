@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useState, useMemo, useRef, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { SkeletonRow } from "@/components/Skeleton";
+import { useToast } from "@/components/Toast";
 
 type Equipment = {
   id: string; internalId: string | null; name: string; model: string | null;
@@ -38,11 +41,22 @@ const STAT: Record<string, { label: string; dot: string; color: string; bg: stri
 };
 
 export default function InventairePage() {
+  return (
+    <Suspense fallback={null}>
+      <InventairePageInner />
+    </Suspense>
+  );
+}
+
+function InventairePageInner() {
+  const toast = useToast();
+  const searchParams = useSearchParams();
   const [equipment, setEquipment] = useState<Equipment[]>([]);
   const [loading, setLoading]     = useState(true);
   const [search, setSearch]       = useState("");
   const [cat, setCat]             = useState("Toutes");
   const [stat, setStat]           = useState("Tous");
+  const [loc, setLoc]             = useState("Toutes");
   const [selected, setSelected]   = useState<Equipment | null>(null);
   const [uploading, setUploading] = useState(false);
   const fileInputRef              = useRef<HTMLInputElement>(null);
@@ -93,6 +107,7 @@ export default function InventairePage() {
     setSelected(updated);
     setEditModal(false);
     setSubmitting(false);
+    toast("Équipement modifié ✓");
   };
 
   const handleMaintenance = async () => {
@@ -106,6 +121,7 @@ export default function InventairePage() {
     const updated = await res.json();
     setEquipment(prev => prev.map(eq => eq.id === updated.id ? updated : eq));
     setSelected(updated);
+    toast(newStatus === "MAINTENANCE" ? "Équipement mis en maintenance ✓" : "Équipement remis disponible ✓");
   };
 
   const handleAdd = async () => {
@@ -130,6 +146,7 @@ export default function InventairePage() {
     setShowModal(false);
     setForm(emptyForm);
     setSubmitting(false);
+    toast("Équipement ajouté ✓ — recherche de la photo en cours...", "info");
     // L'image arrive en arrière-plan — on la récupère après 6 secondes
     setTimeout(async () => {
       const updated = await fetch(`/api/equipment`).then(r => r.json());
@@ -137,6 +154,7 @@ export default function InventairePage() {
       if (found?.imageUrl) {
         setEquipment(updated);
         setSelected(s => s?.id === created.id ? found : s);
+        toast(`Photo trouvée pour ${found.name} ✓`);
       }
     }, 6000);
   };
@@ -164,8 +182,12 @@ export default function InventairePage() {
 
   useEffect(() => {
     fetch("/api/equipment").then(r => r.json()).then(d => {
-      setEquipment(d); setLoading(false); setSelected(d[0] ?? null);
+      setEquipment(d); setLoading(false);
+      const wanted = searchParams.get("equipment");
+      const match = wanted ? d.find((e: Equipment) => e.id === wanted) : null;
+      setSelected(match ?? d[0] ?? null);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const filtered = useMemo(() =>
@@ -175,9 +197,14 @@ export default function InventairePage() {
         (e.name.toLowerCase().includes(q) || (e.brand ?? "").toLowerCase().includes(q) ||
           (e.internalId ?? "").toLowerCase().includes(q)) &&
         (cat === "Toutes" || e.category === cat) &&
-        (stat === "Tous"  || e.status === stat)
+        (stat === "Tous"  || e.status === stat) &&
+        (loc === "Toutes" || e.location === loc)
       );
-    }), [equipment, search, cat, stat]);
+    }), [equipment, search, cat, stat, loc]);
+
+  const locations = useMemo(() =>
+    Array.from(new Set(equipment.map(e => e.location).filter((l): l is string => !!l))).sort(),
+    [equipment]);
 
   const counts = useMemo(() => ({
     total: equipment.length,
@@ -256,31 +283,40 @@ export default function InventairePage() {
             <option value="Toutes">Toutes catégories</option>
             {Object.entries(CAT).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
           </select>
+          <select value={loc} onChange={e => setLoc(e.target.value)} style={{
+            padding: "9px 14px", borderRadius: 10, fontSize: 13, border: "1px solid #e2e8f0",
+            background: "#fff", color: loc !== "Toutes" ? "#0f172a" : "#64748b", outline: "none", cursor: "pointer",
+          }}>
+            <option value="Toutes">Tous les emplacements</option>
+            {locations.map(l => <option key={l} value={l}>📍 {l}</option>)}
+          </select>
         </div>
 
         {/* List */}
         <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 6 }}>
           {loading ? (
-            <div style={{ textAlign: "center", padding: "60px 0", color: "#cbd5e1", fontSize: 13 }}>
-              Chargement...
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {Array.from({ length: 7 }).map((_, i) => <SkeletonRow key={i} withBadge={false} />)}
             </div>
           ) : filtered.length === 0 ? (
             <div style={{ textAlign: "center", padding: "60px 0", color: "#cbd5e1", fontSize: 13 }}>
               Aucun résultat
             </div>
-          ) : filtered.map(e => {
+          ) : filtered.map((e, i) => {
             const isActive = sel?.id === e.id;
             const s = STAT[e.status] ?? STAT.AVAILABLE;
             const dot = CAT_DOT[e.category] ?? "#94a3b8";
             return (
               <div key={e.id} onClick={() => setSelected(e)}
+                className="fade-in-up"
                 style={{
                   display: "flex", alignItems: "center", gap: 14,
                   padding: "13px 16px", borderRadius: 12, cursor: "pointer",
                   background: isActive ? "#0f172a" : "#fff",
                   border: `1px solid ${isActive ? "#0f172a" : "#f1f5f9"}`,
                   boxShadow: isActive ? "0 4px 12px rgba(15,23,42,0.15)" : "0 1px 2px rgba(0,0,0,0.03)",
-                  transition: "all 0.15s",
+                  transition: "background 0.15s, border-color 0.15s, box-shadow 0.15s",
+                  animationDelay: `${Math.min(i, 14) * 25}ms`,
                 }}>
 
                 {/* Colored dot */}
@@ -299,6 +335,12 @@ export default function InventairePage() {
                     fontSize: 11, color: isActive ? "#475569" : "#94a3b8", marginTop: 2,
                     overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
                   }}>{[e.brand, e.model].filter(Boolean).join(" · ") || "—"}</p>
+                  {e.location && (
+                    <p style={{
+                      fontSize: 11, color: isActive ? "#4BAFD6" : "#2D3A8C", fontWeight: 600, marginTop: 2,
+                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                    }}>📍 {e.location}</p>
+                  )}
                 </div>
 
                 {/* Right */}
@@ -467,11 +509,11 @@ export default function InventairePage() {
 
     {/* ══ MODAL MODIFIER ══ */}
     {editModal && selected && (
-      <div style={{
+      <div className="modal-overlay-anim" style={{
         position: "fixed", inset: 0, background: "rgba(15,23,42,0.6)", backdropFilter: "blur(4px)",
         zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 20,
       }} onClick={e => { if (e.target === e.currentTarget) setEditModal(false); }}>
-        <div style={{
+        <div className="modal-panel-anim" style={{
           background: "#fff", borderRadius: 20, padding: 32, width: "100%", maxWidth: 520,
           boxShadow: "0 24px 64px rgba(15,23,42,0.25)",
         }}>
@@ -577,11 +619,11 @@ export default function InventairePage() {
     {/* ══ MODAL AJOUT ══ */}
 
     {showModal && (
-      <div style={{
+      <div className="modal-overlay-anim" style={{
         position: "fixed", inset: 0, background: "rgba(15,23,42,0.6)", backdropFilter: "blur(4px)",
         zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 20,
       }} onClick={e => { if (e.target === e.currentTarget) setShowModal(false); }}>
-        <div style={{
+        <div className="modal-panel-anim" style={{
           background: "#fff", borderRadius: 20, padding: 32, width: "100%", maxWidth: 520,
           boxShadow: "0 24px 64px rgba(15,23,42,0.25)",
         }}>

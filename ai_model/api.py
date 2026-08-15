@@ -21,6 +21,9 @@ app = Flask(__name__)
 CORS(app)
 
 # ─── Chargement du modèle ─────────────────────────────────────────────────────
+# Chargé au niveau module (pas seulement dans __main__) pour fonctionner aussi
+# derrière un serveur WSGI comme gunicorn (ex: hébergement Render), qui importe
+# `api:app` directement sans jamais exécuter le bloc __main__.
 
 model_data = None
 
@@ -31,6 +34,8 @@ def load_model():
     with open(MODEL_PATH, "rb") as f:
         model_data = pickle.load(f)
     print(f"[OK] Modele charge ({len(model_data['recommender']['equipment'])} equipements)")
+
+load_model()
 
 # ─── Routes ──────────────────────────────────────────────────────────────────
 
@@ -123,7 +128,6 @@ def classify():
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    print("\n[START] Demarrage API myDiL IA...")
-    load_model()
-    print("[OK] API disponible sur http://localhost:5001\n")
-    app.run(host="0.0.0.0", port=5001, debug=False)
+    port = int(os.environ.get("PORT", 5001))
+    print(f"[OK] API disponible sur http://0.0.0.0:{port}\n")
+    app.run(host="0.0.0.0", port=port, debug=False)

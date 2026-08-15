@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
+import { useSession, signOut } from "next-auth/react";
+import { CommandPalette } from "@/components/CommandPalette";
 
 const nav = [
   { label: "Dashboard",    href: "/dashboard" },
@@ -13,10 +16,32 @@ const nav = [
   { label: "Vitrine",      href: "/projets" },
 ];
 
+const cmdkNav = nav.map(n => ({ ...n, icon: "📄" }));
+
 const DOTS = ["#E8C030", "#2D3A8C", "#4BAFD6", "#C03050"];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { data: session } = useSession();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, []);
+
+  const name = session?.user?.name ?? "Admin";
+  const initial = name.charAt(0).toUpperCase();
+
+  const handleSignOut = async () => {
+    await signOut({ redirect: false });
+    router.push("/login");
+  };
 
   return (
     <div style={{ minHeight: "100vh", background: "#f8fafc" }}>
@@ -78,6 +103,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
           {/* Right */}
           <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
+            <CommandPalette navItems={cmdkNav} equipmentBaseHref="/dashboard/inventaire" />
+
             {/* Notification dot */}
             <div style={{ position: "relative" }}>
               <div style={{
@@ -98,20 +125,37 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
 
             {/* Avatar */}
-            <div style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
-              <div style={{
-                width: 32, height: 32, borderRadius: 8,
-                background: "linear-gradient(135deg, #2D3A8C 0%, #4BAFD6 100%)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 12, fontWeight: 700, color: "#fff",
-              }}>A</div>
-              <div>
-                <p style={{ fontSize: 12, fontWeight: 600, color: "#0f172a", lineHeight: 1.2 }}>Admin</p>
-                <p style={{ fontSize: 11, color: "#94a3b8", lineHeight: 1.2 }}>myDiL</p>
+            <div ref={menuRef} style={{ position: "relative" }}>
+              <div onClick={() => setMenuOpen(o => !o)}
+                style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
+                <div style={{
+                  width: 32, height: 32, borderRadius: 8,
+                  background: "linear-gradient(135deg, #2D3A8C 0%, #4BAFD6 100%)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 12, fontWeight: 700, color: "#fff",
+                }}>{initial}</div>
+                <div>
+                  <p style={{ fontSize: 12, fontWeight: 600, color: "#0f172a", lineHeight: 1.2 }}>{name}</p>
+                  <p style={{ fontSize: 11, color: "#94a3b8", lineHeight: 1.2 }}>myDiL</p>
+                </div>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="2"
+                  style={{ transform: menuOpen ? "rotate(180deg)" : "none", transition: "transform 0.15s" }}>
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
               </div>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="2">
-                <polyline points="6 9 12 15 18 9"/>
-              </svg>
+
+              {menuOpen && (
+                <div style={{ position: "absolute", top: "calc(100% + 8px)", right: 0,
+                  background: "#fff", borderRadius: 12, border: "1px solid #f1f5f9",
+                  boxShadow: "0 8px 24px rgba(15,23,42,0.12)", minWidth: 180, overflow: "hidden", zIndex: 60 }}>
+                  <button onClick={handleSignOut}
+                    style={{ width: "100%", textAlign: "left", padding: "10px 16px",
+                      fontSize: 13, fontWeight: 500, color: "#C03050", background: "none",
+                      border: "none", cursor: "pointer" }}>
+                    Se déconnecter
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -119,7 +163,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* ── Content ── */}
       <main style={{ maxWidth: 1400, margin: "0 auto", padding: "32px 32px" }}>
-        {children}
+        <div key={pathname} className="page-fade">
+          {children}
+        </div>
       </main>
     </div>
   );
